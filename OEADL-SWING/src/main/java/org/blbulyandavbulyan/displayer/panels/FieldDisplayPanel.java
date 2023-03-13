@@ -3,6 +3,8 @@ package org.blbulyandavbulyan.displayer.panels;
 import org.blbulyandavbulyan.annotations.Displayable;
 import org.blbulyandavbulyan.annotations.OEADLProcessingClass;
 import org.blbulyandavbulyan.displayer.windows.ObjectDisplayerWindow;
+import org.blbulyandavbulyan.exceptions.UnsupportedFieldTypeException;
+import org.blbulyandavbulyan.reflection.FieldToComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,48 +15,9 @@ import java.util.*;
 import java.util.function.Function;
 
 public class FieldDisplayPanel extends JPanel {
-    protected static Map<Class<?>, Function<Object, Component>> fieldTypeToComponentMapperMap = new HashMap<>();
+    static protected FieldToComponent fieldToComponent;
     static {
-        //конвертор для примитивных типов
-        String s = "dd";
-        Class<?> []toStringTypes = {
-                int.class, long.class, short.class, float.class, double.class, byte.class, boolean.class, char.class,
-                Integer.class, Long.class, Short.class, Float.class, Double.class, Byte.class, Boolean.class, Character.class,
-                String.class
-        };
-        //типы для которых сразу можно использовать метод toString
-        Function<Object, Component> objToLabelUsingToString = o -> new JLabel(o.toString());
-        for(Class<?> toStringType : toStringTypes)
-            fieldTypeToComponentMapperMap.put(toStringType, objToLabelUsingToString);
-        //типы данных для которых мы будем использовать класс JList для отображения(в дальнейшем можем и поменять)
-        //Collection и его базовые потомки
-        Class<?> []iterableTypes = {
-                java.util.List.class, java.util.ArrayList.class, java.util.Collection.class, java.util.LinkedList.class, String[].class
-        };
-        Function<Object, Component> iterableObjectConverter =  obj->{
-            if(obj instanceof Collection){
-                Collection<Object> objects = (Collection<Object>) obj;
-                return new JList<>(objects.toArray());
-            }
-            else throw new IllegalArgumentException("argument for this function must be collection or array");
-        };
-        for(Class<?> iterableType : iterableTypes)
-            fieldTypeToComponentMapperMap.put(iterableType, iterableObjectConverter);
-//        Class<?> []primitiveArrayTypes = {
-//                byte[].class, long[].class, int[].class, double[].class, float[].class, short[].class, char[].class, boolean[].class
-//        };
-//        for(Class<?> arrayType : primitiveArrayTypes){
-//            fieldTypeToComponentMapperMap.put(arrayType, (obj)-> {
-//
-//            });
-//        }
-        Class<?> []wrappedArrayTypes = {
-                Byte[].class, Long[].class, Integer[].class, Double[].class, Float[].class, Short[].class, Character[].class, Boolean[].class
-        };
-        for(Class<?> wrappedArrayType : wrappedArrayTypes)
-            fieldTypeToComponentMapperMap.put(wrappedArrayType, (o -> new JList<>((Object[])o)));
-
-
+        fieldToComponent = new FieldToComponent();
     }
     protected JLabel jFieldNameLabel;
     protected Component fieldDisplayComponent;
@@ -77,12 +40,10 @@ public class FieldDisplayPanel extends JPanel {
             return jWatchObject;
         }
         else{
-            //если в нашем map есть соответсвующий маппер для объекта данного типа, то получаем и применяем его
-            if(fieldTypeToComponentMapperMap.containsKey(fieldType)){
-                return fieldTypeToComponentMapperMap.get(fieldType).apply(field.get(objectForDisplay));
+            if(fieldToComponent.canConvert(field)){
+                return fieldToComponent.convert(field, objectForDisplay);
             }
-            //else if(field.getAnnotation(Displayable.class))
         }
-        throw new IllegalArgumentException();
+        throw new UnsupportedFieldTypeException(field);
     }
 }
