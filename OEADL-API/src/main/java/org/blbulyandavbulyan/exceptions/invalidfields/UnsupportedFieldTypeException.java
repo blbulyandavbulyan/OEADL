@@ -1,11 +1,11 @@
-package org.blbulyandavbulyan.exceptions;
+package org.blbulyandavbulyan.exceptions.invalidfields;
 
 import java.lang.reflect.Field;
 
-public class UnsupportedFieldTypeException extends OEADLException{
+public class UnsupportedFieldTypeException extends InvalidFieldException{
     protected final Field field;
     public UnsupportedFieldTypeException(Field field){
-        super(String.format("Unsupported field type %s in class %s", field.getType().getName(), field.getDeclaringClass().getName()));
+        super(field, String.format("Unsupported field type %s in class %s", field.getType().getName(), field.getDeclaringClass().getName()));
         this.field = field;
     }
 
