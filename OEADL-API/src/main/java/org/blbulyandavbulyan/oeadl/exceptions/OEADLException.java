@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.exceptions;
+package org.blbulyandavbulyan.oeadl.exceptions;
 
 public class OEADLException extends RuntimeException{
     public OEADLException(String msg){

@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.displayer.dialogs;
+package org.blbulyandavbulyan.oeadl.displayer.dialogs;
 
 
 import javax.swing.*;
@@ -8,9 +8,9 @@ import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.blbulyandavbulyan.annotations.OEADLField;
-import org.blbulyandavbulyan.displayer.panels.FieldDisplayPanel;
-import org.blbulyandavbulyan.exceptions.invalidclass.NoFieldsForDisplayException;
+import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
+import org.blbulyandavbulyan.oeadl.displayer.panels.FieldDisplayPanel;
+import org.blbulyandavbulyan.oeadl.exceptions.invalidclass.NoFieldsForDisplayException;
 
 public class ObjectDisplayerDialog extends ObjectDialog {
     protected Collection<Field> displayableFields;

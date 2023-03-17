@@ -1,6 +1,6 @@
-package org.blbulyandavbulyan.exceptions.invalidfields;
+package org.blbulyandavbulyan.oeadl.exceptions.invalidfields;
 
-import org.blbulyandavbulyan.exceptions.OEADLException;
+import org.blbulyandavbulyan.oeadl.exceptions.OEADLException;
 
 import java.lang.reflect.Field;
 

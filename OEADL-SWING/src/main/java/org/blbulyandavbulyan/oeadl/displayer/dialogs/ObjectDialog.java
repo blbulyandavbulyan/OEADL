@@ -1,7 +1,7 @@
-package org.blbulyandavbulyan.displayer.dialogs;
+package org.blbulyandavbulyan.oeadl.displayer.dialogs;
 
-import org.blbulyandavbulyan.annotations.OEADLField;
-import org.blbulyandavbulyan.reflection.ProcessingClass;
+import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
+import org.blbulyandavbulyan.oeadl.reflection.ProcessingClass;
 
 import javax.swing.*;
 import java.awt.*;

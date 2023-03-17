@@ -1,8 +1,7 @@
-package org.blbulyandavbulyan.reflection;
+package org.blbulyandavbulyan.oeadl.reflection;
 
-import org.blbulyandavbulyan.annotations.OEADLProcessingClass;
+import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
 
-import java.awt.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.annotations;
+package org.blbulyandavbulyan.oeadl.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

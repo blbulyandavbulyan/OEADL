@@ -1,6 +1,6 @@
-package org.blbulyandavbulyan.displayer.dialogs;
+package org.blbulyandavbulyan.oeadl.displayer.dialogs;
 
-import org.blbulyandavbulyan.annotations.OEADLField;
+import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
 
 import java.awt.*;
 import java.lang.reflect.Field;

@@ -1,6 +1,6 @@
-package org.blbulyandavbulyan.exceptions.invalidclass;
+package org.blbulyandavbulyan.oeadl.exceptions.invalidclass;
 
-import org.blbulyandavbulyan.exceptions.OEADLException;
+import org.blbulyandavbulyan.oeadl.exceptions.OEADLException;
 
 public abstract class InvalidClassException extends OEADLException {
     protected Class<?> invalidClass;

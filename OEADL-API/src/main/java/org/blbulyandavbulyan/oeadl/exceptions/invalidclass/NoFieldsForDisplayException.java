@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.exceptions.invalidclass;
+package org.blbulyandavbulyan.oeadl.exceptions.invalidclass;
 
 public class NoFieldsForDisplayException extends InvalidClassException{
     public NoFieldsForDisplayException(Class<?> c){
