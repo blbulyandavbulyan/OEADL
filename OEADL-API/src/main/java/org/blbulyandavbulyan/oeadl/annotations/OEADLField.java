@@ -15,7 +15,22 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface OEADLField {
-    boolean displayable() default true;//данный параметр отвечает, должно ли отображаться поле в диалоге ObjectDisplayerDialog
+    /**
+     * This parameter needs, if you want to display the annotated field in your class
+     * <br>
+     * Этот параметр нужен, если вы хотите чтобы поле помеченное аннотацией этой аннотацией отображалось
+     * */
+    boolean displayable() default true;
+    /**
+     * This parameter needs, if you want to enable editing the annotated field in your class
+     * <br>
+     * Этот параметр нужен, если вы хотите чтобы данное поле было доступно для редактирования
+     * */
     boolean editable() default true;//данный параметр отвечает, доступно ли это поле для редактирования
+    /**
+     * Этот параметр должен содержать ключ, для получения локализованного имени поля.
+     * <br>
+     * This parameter must contain the property key, which uses for getting localized field name in localizedFieldGetter
+     * */
     String localizedNamePropertyKey() default "";
 }
