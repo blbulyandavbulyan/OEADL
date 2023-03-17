@@ -24,12 +24,9 @@ public abstract class FieldPanel extends JPanel {
         this.localizedFieldName = fieldLocalizedNameGetter.apply(field.getAnnotation(OEADLField.class).localizedNamePropertyKey());
         if(localizedFieldName == null)localizedFieldName = field.getName();
     }
-
-    @Override
-    public Window getParent() {
+    public Window getParentWindow(){
         return parent;
     }
-
     public Field getField() {
         return field;
     }

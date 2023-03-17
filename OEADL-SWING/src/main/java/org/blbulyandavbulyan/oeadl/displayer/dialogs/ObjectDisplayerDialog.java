@@ -13,11 +13,10 @@ import org.blbulyandavbulyan.oeadl.displayer.panels.FieldDisplayPanel;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidclass.NoFieldsForDisplayException;
 
 public class ObjectDisplayerDialog extends ObjectDialog {
+
     protected Collection<Field> displayableFields;
     public ObjectDisplayerDialog(Window parent, Class<?> objectClass, Object objectForDisplay, Function<String, String> fieldLocalizedNameGetter){
         super(parent, objectClass, objectForDisplay, fieldLocalizedNameGetter);
-        rootPanel = new JPanel();
-        rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
         displayableFields = fieldsForProcessing.stream().filter(field -> field.getAnnotation(OEADLField.class).displayable()).collect(Collectors.toList());
         if(!displayableFields.isEmpty()){
             displayableFields.forEach(
@@ -32,7 +31,6 @@ public class ObjectDisplayerDialog extends ObjectDialog {
             );
         }
         else throw new NoFieldsForDisplayException(objectClass);
-        this.getContentPane().add(rootPanel);
         this.pack();
     }
     public ObjectDisplayerDialog(Class<?> objectClass, Object objectForDisplay, Function<String, String> fieldLocalizedNameGetter){

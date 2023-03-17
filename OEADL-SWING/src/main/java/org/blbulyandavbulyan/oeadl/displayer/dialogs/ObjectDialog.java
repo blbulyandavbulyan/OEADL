@@ -15,14 +15,14 @@ public abstract class ObjectDialog extends JDialog {
     protected Function<String, String> localizedFieldNameGetter;
     protected Object processingObject;
     protected JPanel rootPanel;
+
     protected ObjectDialog(Window parent, Class<?> objectClass, Object processingObject, Function<String, String> fieldLocalizedNameGetter){
         super(parent);
-        this.localizedFieldNameGetter = fieldLocalizedNameGetter;
-        this.processingObject = processingObject;
         rootPanel = new JPanel();
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
+        this.localizedFieldNameGetter = fieldLocalizedNameGetter;
+        this.processingObject = processingObject;
         fieldsForProcessing = new ArrayList<>(ProcessingClass.getAllAnnotatedFieldsInOEADLProcessingClass(objectClass, OEADLField.class));
         this.getContentPane().add(rootPanel);
-        this.pack();
     }
 }
