@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
  * */
 public class UndisplayableFieldException extends InvalidFieldException{
     /**
-     * @param field the field, which contains OEADLField annotation and in this annotation the displayable parameter is false
+     * @param field  {@link InvalidFieldException#field}
      * @see org.blbulyandavbulyan.oeadl.annotations.OEADLField
      * */
     public UndisplayableFieldException(Field field) {
