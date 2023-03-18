@@ -12,7 +12,11 @@ import java.lang.reflect.Field;
  * @version 1.0.0
  * */
 public abstract class InvalidFieldException extends OEADLException {
-    private final Field field;
+    /**
+     * Это поле содержит поле, которое вызвало исключение.
+     * This field contains the field, which is cause of the exception
+     * */
+    protected final Field field;
     /**
      *
      * @param field field which produced the exception
