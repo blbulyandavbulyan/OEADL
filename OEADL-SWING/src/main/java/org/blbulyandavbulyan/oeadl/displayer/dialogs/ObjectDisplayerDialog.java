@@ -1,7 +1,6 @@
 package org.blbulyandavbulyan.oeadl.displayer.dialogs;
 
 
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -9,20 +8,28 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
-import org.blbulyandavbulyan.oeadl.displayer.panels.FieldDisplayPanel;
+import org.blbulyandavbulyan.oeadl.displayer.panels.fieldpanel.FieldDisplayPanel;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidclass.NoFieldsForDisplayException;
 
 public class ObjectDisplayerDialog extends ObjectDialog {
-
+    /**
+     * Эта коллекция содержит все поля, которые помечены в классе objectClass аннотацией {@link OEADLField} и у которой параметр {@link OEADLField#displayable()} true
+     * <br>
+     * This collection contains all the fields, which are annotated {@link OEADLField} and {@link OEADLField#displayable()} is true
+     * */
     protected Collection<Field> displayableFields;
-    public ObjectDisplayerDialog(Window parent, Class<?> objectClass, Object objectForDisplay, Function<String, String> fieldLocalizedNameGetter){
-        super(parent, objectClass, objectForDisplay, fieldLocalizedNameGetter);
+    /**
+     * @see ObjectDialog#ObjectDialog(Window, Object, Function)
+     * */
+    public ObjectDisplayerDialog(Window parent, Object objectForDisplay, Function<String, String> localizedNameGetter){
+        super(parent, objectForDisplay, localizedNameGetter);
         displayableFields = fieldsForProcessing.stream().filter(field -> field.getAnnotation(OEADLField.class).displayable()).collect(Collectors.toList());
         if(!displayableFields.isEmpty()){
             displayableFields.forEach(
                     field -> {
                         try {
-                            FieldDisplayPanel fieldDisplayPanel = new FieldDisplayPanel(parent, field, objectForDisplay, fieldLocalizedNameGetter);
+                            //TODO исправить данное место, убрать жёстко заданный русский текст для кнопки
+                            FieldDisplayPanel fieldDisplayPanel = new FieldDisplayPanel(this, field, field.get(objectForDisplay), localizedNameGetter, "Посмотреть детали");
                             rootPanel.add(fieldDisplayPanel);
                         } catch (IllegalAccessException e) {
                             throw new RuntimeException(e);
@@ -33,7 +40,14 @@ public class ObjectDisplayerDialog extends ObjectDialog {
         else throw new NoFieldsForDisplayException(objectClass);
         this.pack();
     }
-    public ObjectDisplayerDialog(Class<?> objectClass, Object objectForDisplay, Function<String, String> fieldLocalizedNameGetter){
-        this(null, objectClass, objectForDisplay, fieldLocalizedNameGetter);
+    /**
+     * Этот конструктор аналогичен уже определённому, за исключением того что parent будет равен null
+     * <br>
+     * This constructor is similar to the already defined, except that the parent parameter will be null
+     * @see ObjectDisplayerDialog#ObjectDisplayerDialog(Window, Object, Function) ObjectDisplayerDialog(parent, objectForDisplay, fieldLocalizedNameGetter)
+     *
+     * */
+    public ObjectDisplayerDialog(Object objectForDisplay, Function<String, String> fieldLocalizedNameGetter){
+        this(null, objectForDisplay, fieldLocalizedNameGetter);
     }
 }

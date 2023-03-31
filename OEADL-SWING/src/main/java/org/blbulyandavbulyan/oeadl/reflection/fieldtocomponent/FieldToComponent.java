@@ -1,5 +1,7 @@
 package org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent;
 
+import org.blbulyandavbulyan.oeadl.exceptions.invalidfields.UnsupportedFieldException;
+
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -20,19 +22,18 @@ public abstract class FieldToComponent {
     protected static final Class<?> [] objectArrayTypes = {
             Byte[].class, Long[].class, Integer[].class, Double[].class, Float[].class, Short[].class, Character[].class, Boolean[].class, String[].class
     };
-    protected Map<Class<?>, Function<Object, Component>> typeToObjectMapperMap;
+    protected Map<Class<?>, ObjectAndItsNameToComponentConverter> typeToObjectMapperMap;
     protected FieldToComponent(){
         typeToObjectMapperMap = new HashMap<>();
     }
     public boolean canConvert(Field field){
         return typeToObjectMapperMap.containsKey(field.getType());
     }
-    public void addConverter(Field field, Function<Object, Component> objectToComponentConverter){
-        typeToObjectMapperMap.put(field.getType(), objectToComponentConverter);
-    }
     public void removeConverter(Field field){
         typeToObjectMapperMap.remove(field.getType());
     }
-    public abstract Component convert(Field field, Object objectContainingField);
-
+    public Component convert(Field field, String displayingName, Object objectContainingField) {
+        if(canConvert(field)) return typeToObjectMapperMap.get(field.getType()).convert(field, displayingName, objectContainingField);
+        else throw new UnsupportedFieldException(field);
+    }
 }

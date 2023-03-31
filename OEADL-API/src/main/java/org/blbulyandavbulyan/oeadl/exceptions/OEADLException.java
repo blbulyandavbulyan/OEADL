@@ -20,4 +20,10 @@ public class OEADLException extends RuntimeException{
     public OEADLException(){
 
     }
+    public OEADLException(Throwable cause, String msg){
+        super(msg, cause);
+    }
+    public OEADLException(Throwable throwable){
+        super(throwable);
+    }
 }

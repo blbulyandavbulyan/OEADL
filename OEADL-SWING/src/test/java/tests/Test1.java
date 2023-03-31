@@ -16,7 +16,7 @@ public class Test1 {
         properties.put("userName", "имя пользователя");
         properties.put("group", "Группа");
         Integer integer = 13;
-        ObjectDisplayerDialog objectDisplayerDialog = new ObjectDisplayerDialog(User.class, user, properties::getProperty);
+        ObjectDisplayerDialog objectDisplayerDialog = new ObjectDisplayerDialog(user, properties::getProperty);
         objectDisplayerDialog.setVisible(true);
         objectDisplayerDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
