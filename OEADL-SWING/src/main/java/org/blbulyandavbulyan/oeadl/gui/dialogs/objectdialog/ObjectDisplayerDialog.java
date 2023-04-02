@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.oeadl.displayer.dialogs;
+package org.blbulyandavbulyan.oeadl.gui.dialogs;
 
 
 import java.awt.*;
@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
-import org.blbulyandavbulyan.oeadl.displayer.panels.fieldpanel.FieldDisplayPanel;
+import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldDisplayPanel;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidclass.NoFieldsForDisplayException;
 
 public class ObjectDisplayerDialog extends ObjectDialog {
@@ -25,6 +25,9 @@ public class ObjectDisplayerDialog extends ObjectDialog {
         super(parent, objectForDisplay, localizedNameGetter);
         displayableFields = fieldsForProcessing.stream().filter(field -> field.getAnnotation(OEADLField.class).displayable()).collect(Collectors.toList());
         if(!displayableFields.isEmpty()){
+            displayableFields.forEach(field -> {
+                FieldComponent fieldComponent =
+            });
             displayableFields.forEach(
                     field -> {
                         try {

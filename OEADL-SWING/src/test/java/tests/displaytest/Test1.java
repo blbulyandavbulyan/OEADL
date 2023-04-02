@@ -2,7 +2,7 @@ package tests;
 
 import classesfordisplay.Group;
 import classesfordisplay.User;
-import org.blbulyandavbulyan.oeadl.displayer.dialogs.ObjectDisplayerDialog;
+import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDisplayerDialog;
 
 import javax.swing.*;
 import java.util.Properties;

@@ -4,5 +4,5 @@ import java.awt.*;
 import java.lang.reflect.Field;
 
 public interface ObjectAndItsNameToComponentConverter {
-    Component convert(Field field, String name, Object obj);
+    Component convertToComponent(Field field, String name, Object obj);
 }

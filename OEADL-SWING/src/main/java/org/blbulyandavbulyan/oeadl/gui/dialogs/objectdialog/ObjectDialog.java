@@ -1,14 +1,16 @@
-package org.blbulyandavbulyan.oeadl.displayer.dialogs;
+package org.blbulyandavbulyan.oeadl.gui.dialogs;
 
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
 import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
 import org.blbulyandavbulyan.oeadl.reflection.ProcessingClass;
+import org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent.FieldComponent;
 
 import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
 
 public abstract class ObjectDialog extends JDialog {
@@ -39,6 +41,7 @@ public abstract class ObjectDialog extends JDialog {
      * @since 1.0.0
      * */
     protected JPanel rootPanel;
+    protected Map<Field, FieldComponent> fieldFieldComponentMap;
     /**
      * @param parent Родительское окно для данного диалога.<br> The parent window for this dialog. {@link Dialog#Dialog(Window)}
      * @param processingObject Объект, который является экземпляром класса objectClass и будет использоваться для отображения или редактирования.<br>
@@ -58,4 +61,5 @@ public abstract class ObjectDialog extends JDialog {
         fieldsForProcessing = new ArrayList<>(ProcessingClass.getAllAnnotatedFieldsInOEADLProcessingClass(objectClass, OEADLField.class));
         this.getContentPane().add(rootPanel);
     }
+//    protected void addFieldPanel(Field field)
 }

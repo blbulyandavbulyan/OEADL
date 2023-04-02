@@ -1,7 +1,7 @@
 package tests;
 
 import classesfordisplay.ClassContainsOnlyPrimitives;
-import org.blbulyandavbulyan.oeadl.displayer.dialogs.ObjectDisplayerDialog;
+import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDisplayerDialog;
 
 import javax.swing.*;
 

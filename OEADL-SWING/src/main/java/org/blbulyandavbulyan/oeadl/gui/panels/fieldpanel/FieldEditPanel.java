@@ -15,12 +15,11 @@ public class FieldEditPanel extends FieldPanel {
     static {
         fieldToComponentForEdit = new FieldToComponentForEdit();
     }
-    protected JLabel jFieldNameLabel;
-
     public FieldEditPanel(Window parent, Field field, Object objectForDisplay, Function<String, String> fieldLocalizedNameGetter, String showObjectDialogButtonText) {
         super(parent, field, objectForDisplay, fieldLocalizedNameGetter, fieldToComponentForEdit, ObjectEditorDialog.class, showObjectDialogButtonText);
         if(!field.getAnnotation(OEADLField.class).editable())throw new UneditableFieldException(field);
-        jFieldNameLabel = new JLabel(fieldNameOrLocalizedFieldName);
-//        this.fieldComponent = fieldToComponentForEdit.convert(field, )
+    }
+    public Object getValue(){
+        return null;
     }
 }

@@ -21,6 +21,7 @@ public abstract class FieldPanel extends JPanel {
     protected Function<String, String> localizedNameGetter;
     protected String fieldNameOrLocalizedFieldName;
     protected Component fieldComponent;
+    protected Class<? extends ObjectDialog> objectDialogClass;
     public FieldPanel(Window parent, Field field, Object processingObejct, Function<String, String> localizedNameGetter, FieldToComponent fieldToComponent, Class<? extends ObjectDialog> objectDialogClass, String showObjectDialogButtonText){
         if(!field.isAnnotationPresent(OEADLField.class))throw new UnsupportedFieldException(field);
         this.parent = parent;
@@ -28,8 +29,10 @@ public abstract class FieldPanel extends JPanel {
         this.processingObejct = processingObejct;
         this.localizedNameGetter = localizedNameGetter;
         this.fieldNameOrLocalizedFieldName = localizedNameGetter.apply(field.getAnnotation(OEADLField.class).localizedNamePropertyKey());
-        if(fieldNameOrLocalizedFieldName == null) fieldNameOrLocalizedFieldName = field.getName();
+        this.objectDialogClass = objectDialogClass;
+        if(fieldNameOrLocalizedFieldName == null || fieldNameOrLocalizedFieldName.isBlank()) fieldNameOrLocalizedFieldName = field.getName();
         this.fieldComponent = generateFieldComponent(parent, field, processingObejct, localizedNameGetter, fieldToComponent, objectDialogClass, showObjectDialogButtonText);
+
     }
     public Window getParentWindow(){
         return parent;
@@ -46,6 +49,13 @@ public abstract class FieldPanel extends JPanel {
         return localizedNameGetter;
     }
 
+    public Class<? extends ObjectDialog> getObjectDialogClass() {
+        return objectDialogClass;
+    }
+
+    public Component getFieldComponent() {
+        return fieldComponent;
+    }
     public String getFieldNameOrLocalizedFieldName() {
         return fieldNameOrLocalizedFieldName;
     }
