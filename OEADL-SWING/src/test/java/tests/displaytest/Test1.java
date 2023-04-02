@@ -1,4 +1,4 @@
-package tests;
+package tests.displaytest;
 
 import classesfordisplay.Group;
 import classesfordisplay.User;

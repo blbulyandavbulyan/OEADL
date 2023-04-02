@@ -1,7 +1,11 @@
-package org.blbulyandavbulyan.oeadl.gui.dialogs;
+
+package org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog;
 
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
 import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
+import org.blbulyandavbulyan.oeadl.exceptions.invalidclass.UnsupportedClassException;
+import org.blbulyandavbulyan.oeadl.gui.interfaces.GetValue;
+import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldPanel;
 import org.blbulyandavbulyan.oeadl.reflection.ProcessingClass;
 import org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent.FieldComponent;
 
@@ -10,10 +14,11 @@ import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Function;
 
-public abstract class ObjectDialog extends JDialog {
+public abstract class ObjectDialog extends JDialog implements GetValue {
     /**
      * Коллекция, содержащая поля для обработки моей библиотекой (отображение или редактирование)
      * <br>
@@ -41,7 +46,7 @@ public abstract class ObjectDialog extends JDialog {
      * @since 1.0.0
      * */
     protected JPanel rootPanel;
-    protected Map<Field, FieldComponent> fieldFieldComponentMap;
+    protected Collection<FieldPanel> fieldPanels;
     /**
      * @param parent Родительское окно для данного диалога.<br> The parent window for this dialog. {@link Dialog#Dialog(Window)}
      * @param processingObject Объект, который является экземпляром класса objectClass и будет использоваться для отображения или редактирования.<br>
@@ -50,6 +55,8 @@ public abstract class ObjectDialog extends JDialog {
      * */
     protected ObjectDialog(Window parent, Object processingObject, Function<String, String> localizedNameGetter){
         super(parent);
+        if(!processingObject.getClass().isAnnotationPresent(OEADLProcessingClass.class))throw new UnsupportedClassException(processingObject.getClass());
+        fieldPanels = new LinkedList<>();
         String dialogTitle = localizedNameGetter.apply(processingObject.getClass().getAnnotation(OEADLProcessingClass.class).localizedClassNamePropertyKey());
         if(dialogTitle == null || dialogTitle.isBlank())dialogTitle = processingObject.getClass().getName();
         this.setTitle(dialogTitle);
@@ -62,4 +69,7 @@ public abstract class ObjectDialog extends JDialog {
         this.getContentPane().add(rootPanel);
     }
 //    protected void addFieldPanel(Field field)
+    public Object getValue(){
+        return processingObject;
+    }
 }

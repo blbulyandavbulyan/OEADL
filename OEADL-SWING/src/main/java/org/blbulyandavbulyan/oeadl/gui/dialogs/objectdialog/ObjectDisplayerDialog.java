@@ -1,4 +1,5 @@
-package org.blbulyandavbulyan.oeadl.gui.dialogs;
+
+package org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog;
 
 
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
+import org.blbulyandavbulyan.oeadl.exceptions.OEADLException;
 import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldDisplayPanel;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidclass.NoFieldsForDisplayException;
 
@@ -25,9 +27,6 @@ public class ObjectDisplayerDialog extends ObjectDialog {
         super(parent, objectForDisplay, localizedNameGetter);
         displayableFields = fieldsForProcessing.stream().filter(field -> field.getAnnotation(OEADLField.class).displayable()).collect(Collectors.toList());
         if(!displayableFields.isEmpty()){
-            displayableFields.forEach(field -> {
-                FieldComponent fieldComponent =
-            });
             displayableFields.forEach(
                     field -> {
                         try {
@@ -35,7 +34,7 @@ public class ObjectDisplayerDialog extends ObjectDialog {
                             FieldDisplayPanel fieldDisplayPanel = new FieldDisplayPanel(this, field, field.get(objectForDisplay), localizedNameGetter, "Посмотреть детали");
                             rootPanel.add(fieldDisplayPanel);
                         } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
+                            throw new OEADLException(e);
                         }
                     }
             );

@@ -1,4 +1,4 @@
-package tests;
+package tests.displaytest;
 
 import classesfordisplay.ClassUsesPrimitiveArrays;
 import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDisplayerDialog;

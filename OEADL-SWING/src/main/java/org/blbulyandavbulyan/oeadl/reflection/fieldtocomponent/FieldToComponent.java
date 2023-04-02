@@ -1,28 +1,31 @@
 package org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent;
 
+import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidfields.UnsupportedFieldException;
+import org.blbulyandavbulyan.oeadl.exceptions.invalidfields.UnsupportedFieldTypeException;
+import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDialog;
+import org.blbulyandavbulyan.oeadl.gui.panels.exceptions.FieldPanelWithObjectDialogCreationException;
 
+import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public abstract class FieldToComponent {
     //типы для которых гарантированно применение toString()
-    protected static final Class<?> []toStringTypes = {
-            int.class, long.class, short.class, float.class, double.class, byte.class, boolean.class, char.class,
-            Integer.class, Long.class, Short.class, Float.class, Double.class, Byte.class, Boolean.class, Character.class,
-            String.class
-    };
+
 
     protected static final Class<?> []iterableTypes = {
-            java.util.List.class, java.util.ArrayList.class, java.util.Collection.class, java.util.LinkedList.class
+            Collection.class
     };
     protected static final Class<?> [] objectArrayTypes = {
             Byte[].class, Long[].class, Integer[].class, Double[].class, Float[].class, Short[].class, Character[].class, Boolean[].class, String[].class
     };
-    protected Map<Class<?>, ObjectAndItsNameToComponentConverter> typeToObjectMapperMap;
+    protected Map<Class<?>, FieldAndObjectAndTheirNameToComponentConverter> typeToObjectMapperMap;
     protected FieldToComponent(){
         typeToObjectMapperMap = new HashMap<>();
     }
@@ -32,8 +35,13 @@ public abstract class FieldToComponent {
     public void removeConverter(Field field){
         typeToObjectMapperMap.remove(field.getType());
     }
-    public Component convert(Field field, String displayingName, Object objectContainingField) {
-        if(canConvert(field)) return typeToObjectMapperMap.get(field.getType()).convert(field, displayingName, objectContainingField);
+    public FieldComponent convert(Field field, String displayingName, Object objectContainingField) {
+        Class<?> fieldType = field.getType();
+        if(canConvert(field)) return typeToObjectMapperMap.get(fieldType).convertToComponent(field, displayingName, objectContainingField);
+        else if(Enum.class.isAssignableFrom(fieldType))
+            return typeToObjectMapperMap.get(Enum.class).convertToComponent(field, displayingName, objectContainingField);
+        else if(Collection.class.isAssignableFrom(fieldType))
+            return typeToObjectMapperMap.get(Collection.class).convertToComponent(field, displayingName, objectContainingField);
         else throw new UnsupportedFieldException(field);
     }
 }

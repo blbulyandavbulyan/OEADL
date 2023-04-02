@@ -1,4 +1,4 @@
-package org.blbulyandavbulyan.oeadl.displayer.panels.exceptions;
+package org.blbulyandavbulyan.oeadl.gui.panels.exceptions;
 
 public class FieldPanelWithObjectDialogCreationException extends FieldPanelException{
     public FieldPanelWithObjectDialogCreationException(Throwable cause, Class<?> causeClass){
