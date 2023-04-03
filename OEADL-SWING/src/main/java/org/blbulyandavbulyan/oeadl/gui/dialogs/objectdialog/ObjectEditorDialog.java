@@ -42,7 +42,7 @@ public class ObjectEditorDialog extends ObjectDialog implements GetValue{
                     //TODO исправить данное место, убрать жёстко заданный русский текст для кнопки
 
                     try {
-                        FieldEditPanel fieldEditPanel = new FieldEditPanel(parent, field, field.get(objectForEditing), fieldLocalizedNameGetter, "Редактировать объект");
+                        FieldEditPanel fieldEditPanel = new FieldEditPanel(this, field, field.get(objectForEditing), fieldLocalizedNameGetter, "Редактировать объект");
                         fieldPanels.add(fieldEditPanel);
                         rootPanel.add(fieldEditPanel);
                     } catch (IllegalAccessException e) {

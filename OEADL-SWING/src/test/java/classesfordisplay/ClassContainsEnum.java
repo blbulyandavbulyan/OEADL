@@ -10,7 +10,8 @@ public class ClassContainsEnum {
     private Type type;
     @OEADLField
     private String name;
-
+    @OEADLField
+    private Integer testInteger = 1;
     public ClassContainsEnum(Type type, String name) {
         this.type = type;
         this.name = name;

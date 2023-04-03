@@ -5,9 +5,7 @@ import java.util.Collection;
 
 public class FieldToComponentForDisplay extends FieldToComponent{
     protected static final Class<?> []toStringTypes = {
-            int.class, long.class, short.class, float.class, double.class, byte.class, boolean.class, char.class,
-            Integer.class, Long.class, Short.class, Float.class, Double.class, Byte.class, Boolean.class, Character.class,
-            String.class, Enum.class
+            int.class, long.class, short.class, float.class, double.class, byte.class, boolean.class, char.class, Number.class, String.class, Enum.class
     };
     public FieldToComponentForDisplay(){
         //типы для которых сразу можно использовать метод toString
@@ -38,8 +36,9 @@ public class FieldToComponentForDisplay extends FieldToComponent{
         };
         for(Class<?> iterableType : iterableTypes)
             typeToObjectMapperMap.put(iterableType, iterableObjectConverter);
-        for(Class<?> wrappedArrayType : objectArrayTypes)
+        for(Class<?> wrappedArrayType : objectArrayTypesWhereIsPossibleToStringForElement)
             typeToObjectMapperMap.put(wrappedArrayType, iterableObjectConverter);
+
 
         //        Class<?> []primitiveArrayTypes = {
 //                byte[].class, long[].class, int[].class, double[].class, float[].class, short[].class, char[].class, boolean[].class

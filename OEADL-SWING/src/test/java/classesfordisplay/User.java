@@ -18,8 +18,8 @@ public class User {
     private String userEmail;
     @OEADLField(localizedNamePropertyKey = "group")
     private Group group;
-    @OEADLField
-    String[] strings = {"test1", "test2", "teset3"};
+//    @OEADLField
+//    String[] strings = {"test1", "test2", "teset3"};
     public User(Long userId, String userName, String userEmail, Group group) {
         this.userId = userId;
         this.userName = userName;
