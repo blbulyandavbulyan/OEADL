@@ -64,7 +64,7 @@ public class FieldToComponentForEdit extends FieldToComponent {
             FieldAndObjectAndTheirNameToComponentConverter fieldComponentForBoolean = (field, name, obj)->{
                 Boolean b = (Boolean) obj;
                 JCheckBox jCheckBox = new JCheckBox(name, b);
-                return new FieldComponent(jCheckBox, jCheckBox::isVisible);
+                return new FieldComponent(jCheckBox, jCheckBox::isSelected);
             };
             typeToObjectMapperMap.put(Boolean.class, fieldComponentForBoolean);
             typeToObjectMapperMap.put(boolean.class, fieldComponentForBoolean);
