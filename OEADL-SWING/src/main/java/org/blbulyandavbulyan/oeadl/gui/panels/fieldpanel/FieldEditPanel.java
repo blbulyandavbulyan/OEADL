@@ -19,7 +19,4 @@ public class FieldEditPanel extends FieldPanel implements GetValue {
         super(parent, field, objectForDisplay, fieldLocalizedNameGetter, fieldToComponentForEdit, ObjectEditorDialog.class, showObjectDialogButtonText);
         if(!field.getAnnotation(OEADLField.class).editable())throw new UneditableFieldException(field);
     }
-    public Object getValue(){
-        return isPanelShowsObjectDialog() ? getObjectDialog().getValue() : fieldComponent.getValue();
-    }
 }

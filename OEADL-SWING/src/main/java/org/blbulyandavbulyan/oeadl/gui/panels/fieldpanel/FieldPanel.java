@@ -4,9 +4,11 @@ package org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel;
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
 import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
 import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDialog;
+import org.blbulyandavbulyan.oeadl.gui.interfaces.GetValue;
 import org.blbulyandavbulyan.oeadl.gui.panels.exceptions.FieldPanelDoesntShowObjectDialogException;
 import org.blbulyandavbulyan.oeadl.gui.panels.exceptions.FieldPanelWithObjectDialogCreationException;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidfields.UnsupportedFieldException;
+import org.blbulyandavbulyan.oeadl.reflection.ProcessingField;
 import org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent.FieldComponent;
 import org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent.FieldToComponent;
 
@@ -16,7 +18,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
-public abstract class FieldPanel extends JPanel{
+public abstract class FieldPanel extends JPanel implements GetValue {
     protected Window parent;
     protected Field field;
     protected Object processingObjectInThisFieldPanel;
@@ -33,11 +35,10 @@ public abstract class FieldPanel extends JPanel{
         this.field = field;
         this.processingObjectInThisFieldPanel = processingObjectInThisFieldPanel;
         this.localizedNameGetter = localizedNameGetter;
-        this.fieldNameOrLocalizedFieldName = localizedNameGetter.apply(field.getAnnotation(OEADLField.class).localizedNamePropertyKey());
+        this.fieldNameOrLocalizedFieldName = ProcessingField.getLocalizedFieldNameOrGetFieldName(localizedNameGetter, field);
         this.objectDialogClass = objectDialogClass;
-        if(fieldNameOrLocalizedFieldName == null || fieldNameOrLocalizedFieldName.isBlank()) fieldNameOrLocalizedFieldName = field.getName();
-        this.fieldComponent = generateFieldComponent(
-                parent, field, processingObjectInThisFieldPanel, localizedNameGetter, fieldToComponent, objectDialogClass, showObjectDialogButtonText
+        this.fieldComponent = fieldToComponent.generateFieldComponent(
+                parent, field, processingObjectInThisFieldPanel, localizedNameGetter, objectDialogClass, showObjectDialogButtonText
         );
         this.add(fieldComponent.getDisplayableComponent());
     }
@@ -61,36 +62,17 @@ public abstract class FieldPanel extends JPanel{
     public String getFieldNameOrLocalizedFieldName() {
         return fieldNameOrLocalizedFieldName;
     }
-    private FieldComponent generateFieldComponent(Window parent, Field field, Object processingObject, Function<String, String> fieldLocalizedNameGetter, FieldToComponent fieldToComponent, Class<? extends ObjectDialog> objectDialogClass, String showObjectDialogButtonText){
-        Class<?> fieldType = field.getType();
-        if(fieldType.isAnnotationPresent(OEADLProcessingClass.class)){
-            try{
-                ObjectDialog objectDialog = objectDialogClass.getDeclaredConstructor(Window.class, Object.class, Function.class)
-                        .newInstance(parent, processingObject, fieldLocalizedNameGetter);
-                JButton jWatchObject = new JButton(showObjectDialogButtonText);
-                jWatchObject.addActionListener(l-> objectDialog.setVisible(!objectDialog.isVisible()));
-                panelShowsObjectDialog = true;
-                this.objectDialog = objectDialog;
-                JPanel jPanel = new JPanel();
-                jPanel.add(new JLabel(fieldNameOrLocalizedFieldName));
-                jPanel.add(jWatchObject);
-                return new FieldComponent(jPanel, objectDialog);
-            }
-            catch(NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e){
-                throw new FieldPanelWithObjectDialogCreationException(e, objectDialogClass);
-            }
-        }
-        else{
-            return fieldToComponent.convert(field, fieldNameOrLocalizedFieldName, processingObject);
-        }
-    }
-    protected boolean isPanelShowsObjectDialog(){
-        return panelShowsObjectDialog;
-    }
-    protected ObjectDialog getObjectDialog(){
-        if(isPanelShowsObjectDialog()){
-            return objectDialog;
-        }
-        else throw new FieldPanelDoesntShowObjectDialogException();
+
+//    protected boolean isPanelShowsObjectDialog(){
+//        return panelShowsObjectDialog;
+//    }
+//    protected ObjectDialog getObjectDialog(){
+//        if(isPanelShowsObjectDialog()){
+//            return objectDialog;
+//        }
+//        else throw new FieldPanelDoesntShowObjectDialogException();
+//    }
+    public Object getValue(){
+        return fieldComponent.getValue();
     }
 }

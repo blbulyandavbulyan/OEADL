@@ -3,13 +3,16 @@ package org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent;
 import javax.swing.*;
 import java.util.Collection;
 
+import static org.blbulyandavbulyan.oeadl.reflection.ProcessingField.getLocalizedFieldNameOrGetFieldName;
+
 public class FieldToComponentForDisplay extends FieldToComponent{
     protected static final Class<?> []toStringTypes = {
             int.class, long.class, short.class, float.class, double.class, byte.class, boolean.class, char.class, Number.class, String.class, Enum.class
     };
     public FieldToComponentForDisplay(){
         //типы для которых сразу можно использовать метод toString
-        FieldAndObjectAndTheirNameToComponentConverter objToLabelUsingToString = ((field, name, obj) -> {
+        FieldAndObjectAndTheirNameToComponentConverter objToLabelUsingToString = ((field, localizedFieldNameGetter, obj, parent) -> {
+            String name = getLocalizedFieldNameOrGetFieldName(localizedFieldNameGetter, field);
             JPanel jPanel = new JPanel();
             jPanel.add(new JLabel(name));
             jPanel.add(new JLabel(obj.toString()));
@@ -20,7 +23,8 @@ public class FieldToComponentForDisplay extends FieldToComponent{
             typeToObjectMapperMap.put(toStringType, objToLabelUsingToString);
         //типы данных для которых мы будем использовать класс JList для отображения(в дальнейшем можем и поменять)
         //Collection и его базовые потомки
-        FieldAndObjectAndTheirNameToComponentConverter iterableObjectConverter =  (field, name, obj) ->{
+        FieldAndObjectAndTheirNameToComponentConverter iterableObjectConverter =  (field, localizedFieldNameGetter, obj, parent) ->{
+            String name = getLocalizedFieldNameOrGetFieldName(localizedFieldNameGetter, field);
             Object[] objects = null;
             if(obj instanceof Collection){
                 objects = ((Collection<Object>) obj).toArray();
