@@ -5,26 +5,24 @@ import java.util.Collection;
 
 import static org.blbulyandavbulyan.oeadl.reflection.ProcessingField.getLocalizedFieldNameOrGetFieldName;
 
-public class FieldToComponentForDisplay extends FieldToComponent{
+public class ComponentGeneratorForDisplay extends ComponentGenerator {
     protected static final Class<?> []toStringTypes = {
             int.class, long.class, short.class, float.class, double.class, byte.class, boolean.class, char.class, Number.class, String.class, Enum.class
     };
-    public FieldToComponentForDisplay(){
+    public ComponentGeneratorForDisplay(){
         //типы для которых сразу можно использовать метод toString
-        FieldAndObjectAndTheirNameToComponentConverter objToLabelUsingToString = ((field, localizedFieldNameGetter, obj, parent) -> {
-            String name = getLocalizedFieldNameOrGetFieldName(localizedFieldNameGetter, field);
+        FieldAndObjectAndTheirNameToComponentConverter objToLabelUsingToString = ((displayableName, localizedFieldNameGetter, obj, parent) -> {
             JPanel jPanel = new JPanel();
-            jPanel.add(new JLabel(name));
+            jPanel.add(new JLabel(displayableName));
             jPanel.add(new JLabel(obj.toString()));
-            return new FieldComponent(jPanel, ()-> obj);
+            return new ComponentAndValueGetter(jPanel, ()-> obj);
         });
 
         for(Class<?> toStringType : toStringTypes)
             typeToObjectMapperMap.put(toStringType, objToLabelUsingToString);
         //типы данных для которых мы будем использовать класс JList для отображения(в дальнейшем можем и поменять)
         //Collection и его базовые потомки
-        FieldAndObjectAndTheirNameToComponentConverter iterableObjectConverter =  (field, localizedFieldNameGetter, obj, parent) ->{
-            String name = getLocalizedFieldNameOrGetFieldName(localizedFieldNameGetter, field);
+        FieldAndObjectAndTheirNameToComponentConverter iterableObjectConverter =  (displayableName, localizedFieldNameGetter, obj, parent) ->{
             Object[] objects = null;
             if(obj instanceof Collection){
                 objects = ((Collection<Object>) obj).toArray();
@@ -34,9 +32,9 @@ public class FieldToComponentForDisplay extends FieldToComponent{
             }
             else throw new IllegalArgumentException("argument for this function must be collection or array");
             JPanel jPanel = new JPanel();
-            jPanel.add(new JLabel(name));
+            jPanel.add(new JLabel(displayableName));
             jPanel.add(new JList<>(objects));
-            return new FieldComponent(jPanel, ()->obj);
+            return new ComponentAndValueGetter(jPanel, ()->obj);
         };
         for(Class<?> iterableType : iterableTypes)
             typeToObjectMapperMap.put(iterableType, iterableObjectConverter);

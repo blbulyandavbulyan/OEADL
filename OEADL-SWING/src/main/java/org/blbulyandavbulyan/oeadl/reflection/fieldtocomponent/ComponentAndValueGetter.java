@@ -3,10 +3,10 @@ package org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent;
 import org.blbulyandavbulyan.oeadl.gui.interfaces.GetValue;
 import java.awt.*;
 
-public class FieldComponent implements GetValue{
+public class ComponentAndValueGetter implements GetValue{
     protected Component displayableComponent;
     protected GetValue getValue;
-    public FieldComponent(Component displayableComponent, GetValue getValue){
+    public ComponentAndValueGetter(Component displayableComponent, GetValue getValue){
         this.displayableComponent = displayableComponent;
         this.getValue = getValue;
     }

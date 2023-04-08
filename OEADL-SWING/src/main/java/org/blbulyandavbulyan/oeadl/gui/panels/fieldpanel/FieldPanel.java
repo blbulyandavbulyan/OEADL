@@ -2,20 +2,16 @@
 package org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel;
 
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
-import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
 import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDialog;
 import org.blbulyandavbulyan.oeadl.gui.interfaces.GetValue;
-import org.blbulyandavbulyan.oeadl.gui.panels.exceptions.FieldPanelDoesntShowObjectDialogException;
-import org.blbulyandavbulyan.oeadl.gui.panels.exceptions.FieldPanelWithObjectDialogCreationException;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidfields.UnsupportedFieldException;
 import org.blbulyandavbulyan.oeadl.reflection.ProcessingField;
-import org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent.FieldComponent;
-import org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent.FieldToComponent;
+import org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent.ComponentAndValueGetter;
+import org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent.ComponentGenerator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
 public abstract class FieldPanel extends JPanel implements GetValue {
@@ -25,11 +21,11 @@ public abstract class FieldPanel extends JPanel implements GetValue {
 
     protected Function<String, String> localizedNameGetter;
     protected String fieldNameOrLocalizedFieldName;
-    protected FieldComponent fieldComponent;
+    protected ComponentAndValueGetter componentAndValueGetter;
     protected Class<? extends ObjectDialog> objectDialogClass;
     protected boolean panelShowsObjectDialog = false;
     protected ObjectDialog objectDialog = null;
-    public FieldPanel(Window parent, Field field, Object processingObjectInThisFieldPanel, Function<String, String> localizedNameGetter, FieldToComponent fieldToComponent, Class<? extends ObjectDialog> objectDialogClass, String showObjectDialogButtonText){
+    public FieldPanel(Window parent, Field field, Object processingObjectInThisFieldPanel, Function<String, String> localizedNameGetter, ComponentGenerator componentGenerator, Class<? extends ObjectDialog> objectDialogClass, String showObjectDialogButtonText){
         if(!field.isAnnotationPresent(OEADLField.class))throw new UnsupportedFieldException(field);
         this.parent = parent;
         this.field = field;
@@ -37,10 +33,10 @@ public abstract class FieldPanel extends JPanel implements GetValue {
         this.localizedNameGetter = localizedNameGetter;
         this.fieldNameOrLocalizedFieldName = ProcessingField.getLocalizedFieldNameOrGetFieldName(localizedNameGetter, field);
         this.objectDialogClass = objectDialogClass;
-        this.fieldComponent = fieldToComponent.generateFieldComponent(
+        this.componentAndValueGetter = componentGenerator.generateFieldComponent(
                 parent, field, processingObjectInThisFieldPanel, localizedNameGetter, objectDialogClass, showObjectDialogButtonText
         );
-        this.add(fieldComponent.getDisplayableComponent());
+        this.add(componentAndValueGetter.getDisplayableComponent());
     }
     public Window getParentWindow(){
         return parent;
@@ -56,8 +52,8 @@ public abstract class FieldPanel extends JPanel implements GetValue {
         return localizedNameGetter;
     }
 
-    public FieldComponent getFieldComponent() {
-        return fieldComponent;
+    public ComponentAndValueGetter getFieldComponent() {
+        return componentAndValueGetter;
     }
     public String getFieldNameOrLocalizedFieldName() {
         return fieldNameOrLocalizedFieldName;
@@ -73,6 +69,6 @@ public abstract class FieldPanel extends JPanel implements GetValue {
 //        else throw new FieldPanelDoesntShowObjectDialogException();
 //    }
     public Object getValue(){
-        return fieldComponent.getValue();
+        return componentAndValueGetter.getValue();
     }
 }

@@ -4,10 +4,10 @@ package org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog;
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
 import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidclass.UnsupportedClassException;
+import org.blbulyandavbulyan.oeadl.gui.dialogs.dialogvaluegetter.DialogValueGetter;
 import org.blbulyandavbulyan.oeadl.gui.interfaces.GetValue;
 import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldPanel;
 import org.blbulyandavbulyan.oeadl.reflection.ProcessingClass;
-import org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent.FieldComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,10 +15,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.function.Function;
 
-public abstract class ObjectDialog extends JDialog implements GetValue {
+public abstract class ObjectDialog extends DialogValueGetter {
     /**
      * Коллекция, содержащая поля для обработки моей библиотекой (отображение или редактирование)
      * <br>

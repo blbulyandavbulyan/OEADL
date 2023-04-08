@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public abstract class FieldToComponent {
+public abstract class ComponentGenerator {
     //типы для которых гарантированно применение toString()
     protected static final Class<?> []iterableTypes = {
             Collection.class
@@ -23,8 +23,9 @@ public abstract class FieldToComponent {
     protected static final Class<?> [] objectArrayTypesWhereIsPossibleToStringForElement = {
             Number[].class, Character[].class, String[].class, Boolean[].class
     };
+
     protected Map<Class<?>, FieldAndObjectAndTheirNameToComponentConverter> typeToObjectMapperMap;
-    protected FieldToComponent(){
+    protected ComponentGenerator(){
         typeToObjectMapperMap = new HashMap<>();
     }
     protected boolean canConvert(Field field){
@@ -33,11 +34,11 @@ public abstract class FieldToComponent {
     public void removeConverter(Field field){
         typeToObjectMapperMap.remove(field.getType());
     }
-    public FieldComponent generateFieldComponent(Window parent, Field field, Object processingObject, Function<String, String> fieldLocalizedNameGetter, Class<? extends ObjectDialog> objectDialogClass, String showObjectDialogButtonText){
+    public ComponentAndValueGetter generateFieldComponent(Window parent, Field field, Object processingObject, Function<String, String> fieldLocalizedNameGetter, Class<? extends ObjectDialog> objectDialogClass, String showObjectDialogButtonText){
         Class<?> fieldType = field.getType();
         String fieldName = ProcessingField.getLocalizedFieldNameOrGetFieldName(fieldLocalizedNameGetter, field);
         if(canConvert(field))
-            return typeToObjectMapperMap.get(fieldType).convertToComponent(field, fieldLocalizedNameGetter, processingObject, parent);
+            return typeToObjectMapperMap.get(fieldType).convertToComponentAndValueGetter(fieldName, fieldLocalizedNameGetter, processingObject, parent);
         else if(fieldType.isAnnotationPresent(OEADLProcessingClass.class)){
             try{
                 ObjectDialog objectDialog = objectDialogClass.getDeclaredConstructor(Window.class, Object.class, Function.class)
@@ -47,20 +48,20 @@ public abstract class FieldToComponent {
                 JPanel jPanel = new JPanel();
                 jPanel.add(new JLabel(fieldName));
                 jPanel.add(jWatchObject);
-                return new FieldComponent(jPanel, objectDialog);
+                return new ComponentAndValueGetter(jPanel, objectDialog);
             }
             catch(NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e){
                 throw new FieldPanelWithObjectDialogCreationException(e, objectDialogClass);
             }
         }
         else if(Enum.class.isAssignableFrom(fieldType))
-            return typeToObjectMapperMap.get(Enum.class).convertToComponent(field, fieldLocalizedNameGetter, processingObject, parent);
+            return typeToObjectMapperMap.get(Enum.class).convertToComponentAndValueGetter(fieldName, fieldLocalizedNameGetter, processingObject, parent);
         else if(Collection.class.isAssignableFrom(fieldType))
-            return typeToObjectMapperMap.get(Collection.class).convertToComponent(field, fieldLocalizedNameGetter, processingObject, parent);
+            return typeToObjectMapperMap.get(Collection.class).convertToComponentAndValueGetter(fieldName, fieldLocalizedNameGetter, processingObject, parent);
         else if(Number[].class.isAssignableFrom(fieldType))
-            return typeToObjectMapperMap.get(Number[].class).convertToComponent(field, fieldLocalizedNameGetter, processingObject, parent);
+            return typeToObjectMapperMap.get(Number[].class).convertToComponentAndValueGetter(fieldName, fieldLocalizedNameGetter, processingObject, parent);
         else if(Number.class.isAssignableFrom(fieldType))
-            return typeToObjectMapperMap.get(Number.class).convertToComponent(field, fieldLocalizedNameGetter, processingObject, parent);
+            return typeToObjectMapperMap.get(Number.class).convertToComponentAndValueGetter(fieldName, fieldLocalizedNameGetter, processingObject, parent);
         else throw new UnsupportedFieldException(field);
     }
 }
