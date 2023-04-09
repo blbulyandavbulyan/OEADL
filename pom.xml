@@ -9,8 +9,9 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>OEADL-API</module>
+        <module>OEADL-EXCEPTIONS</module>
         <module>OEADL-SWING</module>
+        <module>OEADL-ANNOTATIONS</module>
     </modules>
 
     <properties>

@@ -1,13 +1,15 @@
 package org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel;
 
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
-import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectEditorDialog;
+import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDialog;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidfields.UneditableFieldException;
-import org.blbulyandavbulyan.oeadl.gui.interfaces.GetValue;
-import org.blbulyandavbulyan.oeadl.reflection.fieldtocomponent.ComponentGeneratorForEdit;
+import org.blbulyandavbulyan.oeadl.interfaces.GenerateObjectDialog;
+import org.blbulyandavbulyan.oeadl.interfaces.GetResourceBundleByClass;
+import org.blbulyandavbulyan.oeadl.interfaces.GetValue;
+import org.blbulyandavbulyan.oeadl.gui.componentgenerator.ComponentGeneratorForEdit;
 
-import java.awt.*;
 import java.lang.reflect.Field;
+import java.util.ResourceBundle;
 import java.util.function.Function;
 
 public class FieldEditPanel extends FieldPanel implements GetValue {
@@ -15,8 +17,8 @@ public class FieldEditPanel extends FieldPanel implements GetValue {
     static {
         fieldToComponentForEdit = new ComponentGeneratorForEdit();
     }
-    public FieldEditPanel(Window parent, Field field, Object objectForDisplay, Function<String, String> fieldLocalizedNameGetter, String showObjectDialogButtonText) {
-        super(parent, field, objectForDisplay, fieldLocalizedNameGetter, fieldToComponentForEdit, ObjectEditorDialog.class, showObjectDialogButtonText);
+    public FieldEditPanel(ObjectDialog parent, Field field, Object objectForDisplay, ResourceBundle uiResourceBundle, GenerateObjectDialog generateObjectDialog, GetResourceBundleByClass getResourceBundleByClass){
+        super(parent, field, objectForDisplay, fieldToComponentForEdit, uiResourceBundle.getString("oeadl_swing.buttons.edit"), generateObjectDialog, getResourceBundleByClass, uiResourceBundle);
         if(!field.getAnnotation(OEADLField.class).editable())throw new UneditableFieldException(field);
     }
 }

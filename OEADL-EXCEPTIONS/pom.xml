@@ -8,23 +8,12 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>OEADL-EXCEPTIONS</artifactId>
     <version>1.0.2</version>
-    <artifactId>OEADL-SWING</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>org.blbulyandavbulyan</groupId>
-            <artifactId>OEADL-EXCEPTIONS</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.blbulyandavbulyan</groupId>
-            <artifactId>OEADL-ANNOTATIONS</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-    </dependencies>
     <properties>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

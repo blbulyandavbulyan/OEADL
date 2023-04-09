@@ -1,6 +1,6 @@
 package org.blbulyandavbulyan.oeadl.gui.dialogs.dialogvaluegetter;
 
-import org.blbulyandavbulyan.oeadl.gui.interfaces.GetValue;
+import org.blbulyandavbulyan.oeadl.interfaces.GetValue;
 
 import javax.swing.*;
 import java.awt.*;
