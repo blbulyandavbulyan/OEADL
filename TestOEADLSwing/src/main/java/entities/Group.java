@@ -5,13 +5,13 @@ import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
 
 @OEADLProcessingClass
 public class Group {
-    @OEADLField
+    @OEADLField(localizedNamePropertyKey = "id")
     private Long id;
-    @OEADLField
+    @OEADLField(localizedNamePropertyKey = "rank")
     private Integer rank;
-    @OEADLField
+    @OEADLField(localizedNamePropertyKey = "name")
     private String name;
-    @OEADLField
+    @OEADLField(localizedNamePropertyKey = "banned")
     private boolean banned;
 
     public Group(Long id, Integer rank, String name, boolean banned) {

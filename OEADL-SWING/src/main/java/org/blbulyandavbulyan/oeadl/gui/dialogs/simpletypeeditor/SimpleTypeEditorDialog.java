@@ -1,13 +1,14 @@
 package org.blbulyandavbulyan.oeadl.gui.dialogs.simpletypeeditor;
 
-import org.blbulyandavbulyan.oeadl.gui.dialogs.dialogvaluegetter.DialogValueGetter;
 import org.blbulyandavbulyan.oeadl.gui.componentgenerator.ComponentAndValueGetter;
+import org.blbulyandavbulyan.oeadl.interfaces.SetVisibleAndAddOkActionAndGetValueAndDisposeInterface;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-public class SimpleTypeEditorDialog extends DialogValueGetter {
+public class SimpleTypeEditorDialog extends JDialog implements SetVisibleAndAddOkActionAndGetValueAndDisposeInterface {
     protected ComponentAndValueGetter componentAndValueGetter;
     protected JButton okButton;
     protected JButton cancelButton;
@@ -39,5 +40,10 @@ public class SimpleTypeEditorDialog extends DialogValueGetter {
     @Override
     public Object getValue() {
         return value;
+    }
+
+    @Override
+    public void addOkAction(ActionListener l) {
+        okButton.addActionListener(l);
     }
 }

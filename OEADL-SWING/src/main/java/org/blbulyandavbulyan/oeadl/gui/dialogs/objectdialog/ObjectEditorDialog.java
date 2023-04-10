@@ -3,15 +3,15 @@ package org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog;
 
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
 import org.blbulyandavbulyan.oeadl.exceptions.OEADLException;
-import org.blbulyandavbulyan.oeadl.factories.ObjectEditorDialogFactory;
 import org.blbulyandavbulyan.oeadl.interfaces.GenerateObjectDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GetResourceBundleByClass;
-import org.blbulyandavbulyan.oeadl.interfaces.GetValue;
 import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldEditPanel;
 import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldPanel;
+import org.blbulyandavbulyan.oeadl.interfaces.SetVisibleAndAddOkActionAndGetValueAndDisposeInterface;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.ResourceBundle;
@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
  * @version 1.0.0
  * @since 1.0.0
  * */
-public class ObjectEditorDialog extends ObjectDialog implements GetValue{
+public class ObjectEditorDialog extends ObjectDialog implements SetVisibleAndAddOkActionAndGetValueAndDisposeInterface {
 
     protected Collection<Field> fieldsForEdit;
     protected JButton okButton;
@@ -76,5 +76,10 @@ public class ObjectEditorDialog extends ObjectDialog implements GetValue{
     private void okCancelAction(){
         if(getParent() == null)dispose();
         else setVisible(false);
+    }
+
+    @Override
+    public void addOkAction(ActionListener l) {
+        okButton.addActionListener(l);
     }
 }

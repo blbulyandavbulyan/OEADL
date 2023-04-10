@@ -56,10 +56,13 @@ public abstract class ComponentGenerator {
             typeToObjectMapperMap.replace(classForConverting, converter);
         else throw new ConvertorForClassDoesntExists(classForConverting);
     }
-    public ComponentAndValueGetter generateFieldComponent(ObjectDialog parent, Field field, Object processingObject, String showObjectDialogButtonText, GenerateObjectDialog generateObjectDialog, GetResourceBundleByClass getResourceBundleByClass, ResourceBundle uiResourceBundle){
+    public ComponentAndValueGetter generateFieldComponent(ObjectDialog parent, Field field, Object processingObject,
+                                                          String showObjectDialogButtonText, GenerateObjectDialog generateObjectDialog,
+                                                          GetResourceBundleByClass getResourceBundleByClass, ResourceBundle uiResourceBundle){
         Class<?> fieldType = field.getType();
         String fieldName = GetNameOrDefault.getNameOrDefault(
-                getResourceBundleByClass.getResourceBundleForClass(fieldType), field.getAnnotation(OEADLField.class).localizedNamePropertyKey(), field.getName()
+                getResourceBundleByClass.getResourceBundleForClass(field.getDeclaringClass()),
+                field.getAnnotation(OEADLField.class).localizedNamePropertyKey(), field.getName()
         );
         if(canConvert(field))
             return typeToObjectMapperMap.get(fieldType).convertToComponentAndValueGetter(fieldName, processingObject, parent, uiResourceBundle, generateObjectDialog, getResourceBundleByClass);
@@ -72,10 +75,6 @@ public abstract class ComponentGenerator {
                 jPanel.add(new JLabel(fieldName));
                 jPanel.add(jWatchObject);
                 return new ComponentAndValueGetter(jPanel, objectDialog);
-//            }
-//            catch(NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e){
-//                throw new FieldPanelWithObjectDialogCreationException(e, objectDialogClass);
-//            }
         }
         else{
             //нашего типа поля нет в списке доступных и он не помечен аннотацией OEADLProcessingClass, значит попробуем найти его родителя в списке доступных типов
