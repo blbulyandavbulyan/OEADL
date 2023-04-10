@@ -106,7 +106,6 @@ public class ComponentGeneratorForEdit extends ComponentGenerator {
                 if(element.getClass().isAnnotationPresent(OEADLProcessingClass.class)){
                     setVisibleAndAddOkActionAndGetValueAndDisposeInterface = (EditorDialogControllingInterface) generateObjectDialog.generateObjectDialog(parent, element);
                 }
-                // FIXME: 10.04.2023 Ошибка, тут, данный фрагмент не может обрабатывать примитивы, которые являеются наследниками какого либо класса, который моя библиотека в состоянии обработать
                 else{
                     setVisibleAndAddOkActionAndGetValueAndDisposeInterface = new SimpleTypeEditorDialog(
                             parent,
