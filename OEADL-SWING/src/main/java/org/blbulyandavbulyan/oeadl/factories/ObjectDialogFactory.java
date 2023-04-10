@@ -49,8 +49,15 @@ public abstract class ObjectDialogFactory implements GetResourceBundleByClass, G
         try {
             return objectDialogClass.getConstructor(Window.class, Object.class, ResourceBundle.class, GenerateObjectDialog.class, GetResourceBundleByClass.class)
                     .newInstance(parent, processingObject, uiTextRb, this, this);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             throw new OEADLException(e);
+        }
+        catch (InvocationTargetException e){
+            Throwable thr = e.getCause();
+            if(thr instanceof OEADLException){
+                throw (OEADLException)thr;
+            }
+            else throw new OEADLException(thr);
         }
     }
 }

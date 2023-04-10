@@ -1,4 +1,4 @@
 package org.blbulyandavbulyan.oeadl.interfaces;
 
-public interface SetVisibleAndAddOkActionAndGetValueAndDisposeInterface extends SetVisibleInterface, AddOkActionInterface, GetValue, DisposeInterface{
+public interface EditorDialogControllingInterface extends SetVisibleInterface, SetActionAfterOkButtonPressed, SetActionAfterCancelButtonPressedInterface, GetValue, DisposeInterface{
 }

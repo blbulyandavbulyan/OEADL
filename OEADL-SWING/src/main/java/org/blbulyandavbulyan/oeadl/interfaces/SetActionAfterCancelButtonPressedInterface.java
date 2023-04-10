@@ -1,2 +1,5 @@
-package org.blbulyandavbulyan.oeadl.interfaces;public interface SetAfterCancelActionInterface {
+package org.blbulyandavbulyan.oeadl.interfaces;
+
+public interface SetActionAfterCancelButtonPressedInterface {
+    void setActionAfterCancelButtonPressed(Runnable action);
 }

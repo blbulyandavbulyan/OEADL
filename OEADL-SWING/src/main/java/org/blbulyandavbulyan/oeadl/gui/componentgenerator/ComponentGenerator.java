@@ -5,20 +5,18 @@ import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidfields.UnsupportedFieldException;
 import org.blbulyandavbulyan.oeadl.exceptions.componentgenerator.ClassConvertorAlreadyExistsException;
 import org.blbulyandavbulyan.oeadl.exceptions.componentgenerator.ConvertorForClassDoesntExists;
+import org.blbulyandavbulyan.oeadl.exceptions.invalidtype.UnsupportedTypeException;
 import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GenerateObjectDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GetResourceBundleByClass;
 import org.blbulyandavbulyan.oeadl.namegetter.GetNameOrDefault;
 
 import javax.swing.*;
-import java.awt.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.function.Function;
 
 public abstract class ComponentGenerator {
     //типы для которых гарантированно применение toString()
@@ -56,9 +54,9 @@ public abstract class ComponentGenerator {
             typeToObjectMapperMap.replace(classForConverting, converter);
         else throw new ConvertorForClassDoesntExists(classForConverting);
     }
-    public ComponentAndValueGetter generateFieldComponent(ObjectDialog parent, Field field, Object processingObject,
-                                                          String showObjectDialogButtonText, GenerateObjectDialog generateObjectDialog,
-                                                          GetResourceBundleByClass getResourceBundleByClass, ResourceBundle uiResourceBundle){
+    public ComponentAndValueGetter generateComponentAndValueGetter(ObjectDialog parent, Field field, Object processingObject,
+                                                                   String showObjectDialogButtonText, GenerateObjectDialog generateObjectDialog,
+                                                                   GetResourceBundleByClass getResourceBundleByClass, ResourceBundle uiResourceBundle){
         Class<?> fieldType = field.getType();
         String fieldName = GetNameOrDefault.getNameOrDefault(
                 getResourceBundleByClass.getResourceBundleForClass(field.getDeclaringClass()),
@@ -78,13 +76,23 @@ public abstract class ComponentGenerator {
         }
         else{
             //нашего типа поля нет в списке доступных и он не помечен аннотацией OEADLProcessingClass, значит попробуем найти его родителя в списке доступных типов
-            for(Class<?> currentClass = fieldType; currentClass!= Object.class; currentClass = currentClass.getSuperclass()){
-                if(canConvert(currentClass)){
-                    return typeToObjectMapperMap.get(currentClass).convertToComponentAndValueGetter(fieldName, processingObject, parent, uiResourceBundle, generateObjectDialog, getResourceBundleByClass);
-                }
+            try {
+                return generateComponentAndValueGetterForGivingTypeOrForItsParentClass(parent, fieldName, processingObject, generateObjectDialog, getResourceBundleByClass, uiResourceBundle);
             }
-            //бросаем исключения если ни один родитель нам не подошёл
-            throw new UnsupportedFieldException(field);
+            catch (UnsupportedTypeException e){
+                throw new UnsupportedFieldException(field);
+            }
         }
+    }
+    public ComponentAndValueGetter generateComponentAndValueGetterForGivingTypeOrForItsParentClass(ObjectDialog parent, String name, Object processingObject, GenerateObjectDialog generateObjectDialog,
+                                                                                                   GetResourceBundleByClass getResourceBundleByClass, ResourceBundle uiResourceBundle){
+        //нашего типа поля нет в списке доступных и он не помечен аннотацией OEADLProcessingClass, значит попробуем найти его родителя в списке доступных типов
+        for(Class<?> currentClass = processingObject.getClass(); currentClass!= Object.class; currentClass = currentClass.getSuperclass()){
+            if(canConvert(currentClass)){
+                return typeToObjectMapperMap.get(currentClass).convertToComponentAndValueGetter(name, processingObject, parent, uiResourceBundle, generateObjectDialog, getResourceBundleByClass);
+            }
+        }
+        throw new UnsupportedTypeException(processingObject.getClass());
+        //бросаем исключения если ни один родитель нам не подошёл
     }
 }

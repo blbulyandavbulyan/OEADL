@@ -5,7 +5,7 @@ import org.blbulyandavbulyan.oeadl.gui.dialogs.simpletypeeditor.SimpleTypeEditor
 import org.blbulyandavbulyan.oeadl.gui.forjtextfield.JTextFieldLimit;
 import org.blbulyandavbulyan.oeadl.interfaces.GenerateObjectDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GetResourceBundleByClass;
-import org.blbulyandavbulyan.oeadl.interfaces.SetVisibleAndAddOkActionAndGetValueAndDisposeInterface;
+import org.blbulyandavbulyan.oeadl.interfaces.EditorDialogControllingInterface;
 
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
@@ -86,27 +88,34 @@ public class ComponentGeneratorForEdit extends ComponentGenerator {
         }
         // TODO: 03.04.2023 добавить здесь обработку для коллекций, добавить возможность обработки коллекций из смешанных типов
         typeToObjectMapperMap.put(Collection.class, ((String objectDisplayableName, Object obj, ObjectDialog parent, ResourceBundle uiResourceBundle, GenerateObjectDialog generateObjectDialog, GetResourceBundleByClass getResourceBundleByClass) -> {
-            Map<Object, SetVisibleAndAddOkActionAndGetValueAndDisposeInterface> objectToDialogValueGetter = new HashMap<>();
+            Map<Object, EditorDialogControllingInterface> objectToDialogValueGetter = new HashMap<>();
             Collection<Object> elements = (Collection<Object>) obj;
             DefaultListModel<Object> objectListModel = new DefaultListModel<>();
             objectListModel.addAll(elements);
             JList<Object> objectJList = new JList<>(objectListModel);
+            JButton removeButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.delete"));
+            JButton editButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.edit"));
             int counter = 1;
+            Consumer<Boolean> setEnabledForCollectionControlComponents = (enabled)->{
+                objectJList.setEnabled(enabled);
+                removeButton.setEnabled(enabled && !objectJList.isSelectionEmpty());
+                editButton.setEnabled(enabled && !objectJList.isSelectionEmpty());
+            };
             for (Object element : elements){
-                SetVisibleAndAddOkActionAndGetValueAndDisposeInterface setVisibleAndAddOkActionAndGetValueAndDisposeInterface = null;
+                EditorDialogControllingInterface setVisibleAndAddOkActionAndGetValueAndDisposeInterface = null;
                 if(element.getClass().isAnnotationPresent(OEADLProcessingClass.class)){
-                    setVisibleAndAddOkActionAndGetValueAndDisposeInterface = (SetVisibleAndAddOkActionAndGetValueAndDisposeInterface) generateObjectDialog.generateObjectDialog(parent, element);
+                    setVisibleAndAddOkActionAndGetValueAndDisposeInterface = (EditorDialogControllingInterface) generateObjectDialog.generateObjectDialog(parent, element);
                 }
                 // FIXME: 10.04.2023 Ошибка, тут, данный фрагмент не может обрабатывать примитивы, которые являеются наследниками какого либо класса, который моя библиотека в состоянии обработать
-                else if(typeToObjectMapperMap.containsKey(element.getClass())){
+                else{
                     setVisibleAndAddOkActionAndGetValueAndDisposeInterface = new SimpleTypeEditorDialog(
                             parent,
-                            typeToObjectMapperMap.get(element.getClass()).convertToComponentAndValueGetter(String.format("Элемент %d", counter), element, parent, uiResourceBundle, generateObjectDialog, getResourceBundleByClass),
+                            generateComponentAndValueGetterForGivingTypeOrForItsParentClass(parent, String.format("Элемент %d", counter), element, generateObjectDialog, getResourceBundleByClass, uiResourceBundle),
                             uiResourceBundle
                     );
                 }
-                SetVisibleAndAddOkActionAndGetValueAndDisposeInterface finalSetVisibleAndAddOkActionAndGetValueAndDisposeInterface = setVisibleAndAddOkActionAndGetValueAndDisposeInterface;
-                setVisibleAndAddOkActionAndGetValueAndDisposeInterface.addOkAction((actionEvent)->{
+                EditorDialogControllingInterface finalSetVisibleAndAddOkActionAndGetValueAndDisposeInterface = setVisibleAndAddOkActionAndGetValueAndDisposeInterface;
+                finalSetVisibleAndAddOkActionAndGetValueAndDisposeInterface.setAfterOkButtonPressedAction(()->{
                     // TODO: 10.04.2023 попробовать оптимизировать этот фрагмент кода, в чём смысл map если здесь будут менятся ключи, а не значение ?
                     Object oldValue = objectJList.getSelectedValue();
                     Object newValue = finalSetVisibleAndAddOkActionAndGetValueAndDisposeInterface.getValue();
@@ -114,6 +123,12 @@ public class ComponentGeneratorForEdit extends ComponentGenerator {
                     objectListModel.addElement(newValue);
                     objectToDialogValueGetter.remove(oldValue);
                     objectToDialogValueGetter.put(newValue, finalSetVisibleAndAddOkActionAndGetValueAndDisposeInterface);
+                    objectJList.invalidate();
+                    objectJList.revalidate();
+                    setEnabledForCollectionControlComponents.accept(true);
+                });
+                finalSetVisibleAndAddOkActionAndGetValueAndDisposeInterface.setActionAfterCancelButtonPressed(()->{
+                    setEnabledForCollectionControlComponents.accept(true);
                 });
                 objectToDialogValueGetter.put(element, setVisibleAndAddOkActionAndGetValueAndDisposeInterface);
                 counter++;
@@ -126,13 +141,12 @@ public class ComponentGeneratorForEdit extends ComponentGenerator {
             // TODO: 10.04.2023 Подумать над тем, нужна ли тут кнопка "Добавить", если не понятно какой элемент мы будем добавлять
 
 //            JButton addButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.add"));
-            JButton removeButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.delete"));
-            JButton editButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.edit"));
+
 //            modifyCollectionButtonsPanel.add(addButton);
             modifyCollectionButtonsPanel.add(removeButton);
             modifyCollectionButtonsPanel.add(editButton);
             componentEditorPanel.add(modifyCollectionButtonsPanel);
-            objectJList.setSelectionMode(SINGLE_SELECTION);
+
 //            addButton.addActionListener(l->{
 //
 //            });
@@ -140,13 +154,22 @@ public class ComponentGeneratorForEdit extends ComponentGenerator {
                 Object selectedObject = objectJList.getSelectedValue();
                 objectToDialogValueGetter.get(selectedObject).dispose();
                 objectToDialogValueGetter.remove(selectedObject);
-                objectJList.remove(objectJList.getSelectedIndex());
+                objectListModel.removeElement(selectedObject);
+                removeButton.setEnabled(false);
+                editButton.setEnabled(false);
             });
             editButton.addActionListener(l->{
                 Object selectedObject = objectJList.getSelectedValue();
                 objectJList.setEnabled(false);
                 objectToDialogValueGetter.get(selectedObject).setVisible(true);
             });
+            removeButton.setEnabled(false);
+            editButton.setEnabled(false);
+            objectJList.addListSelectionListener(listSelectionEvent -> {
+                removeButton.setEnabled(!objectJList.isSelectionEmpty());
+                editButton.setEnabled(!objectJList.isSelectionEmpty());
+            });
+            objectJList.setSelectionMode(SINGLE_SELECTION);
             return new ComponentAndValueGetter(componentEditorPanel, ()->{
                 try {
                     Collection<Object> abstractCollection = elements.getClass().getConstructor().newInstance();

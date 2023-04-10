@@ -9,7 +9,6 @@ import org.blbulyandavbulyan.oeadl.interfaces.GetValue;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidfields.UnsupportedFieldException;
 import org.blbulyandavbulyan.oeadl.gui.componentgenerator.ComponentAndValueGetter;
 import org.blbulyandavbulyan.oeadl.gui.componentgenerator.ComponentGenerator;
-import org.blbulyandavbulyan.oeadl.namegetter.GetNameOrDefault;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +29,7 @@ public abstract class FieldPanel extends JPanel implements GetValue {
         this.parent = parent;
         this.field = field;
         this.processingObjectInThisFieldPanel = processingObjectInThisFieldPanel;
-        this.componentAndValueGetter = componentGenerator.generateFieldComponent(parent, field, processingObjectInThisFieldPanel, showObjectDialogText, generateObjectDialog, getResourceBundleByClass, uiResourceBundle);
+        this.componentAndValueGetter = componentGenerator.generateComponentAndValueGetter(parent, field, processingObjectInThisFieldPanel, showObjectDialogText, generateObjectDialog, getResourceBundleByClass, uiResourceBundle);
         this.add(componentAndValueGetter.getDisplayableComponent());
     }
     public Window getParentWindow(){

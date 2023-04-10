@@ -1,5 +1,5 @@
 package org.blbulyandavbulyan.oeadl.interfaces;
 
-public interface SetAfterOkButtonPressedAction {
+public interface SetActionAfterOkButtonPressed {
     void setAfterOkButtonPressedAction(Runnable action);
 }

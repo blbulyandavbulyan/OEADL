@@ -7,11 +7,10 @@ import org.blbulyandavbulyan.oeadl.interfaces.GenerateObjectDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GetResourceBundleByClass;
 import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldEditPanel;
 import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldPanel;
-import org.blbulyandavbulyan.oeadl.interfaces.SetVisibleAndAddOkActionAndGetValueAndDisposeInterface;
+import org.blbulyandavbulyan.oeadl.interfaces.EditorDialogControllingInterface;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.ResourceBundle;
@@ -24,12 +23,13 @@ import java.util.ResourceBundle;
  * @version 1.0.0
  * @since 1.0.0
  * */
-public class ObjectEditorDialog extends ObjectDialog implements SetVisibleAndAddOkActionAndGetValueAndDisposeInterface {
+public class ObjectEditorDialog extends ObjectDialog implements EditorDialogControllingInterface {
 
     protected Collection<Field> fieldsForEdit;
     protected JButton okButton;
     protected JButton cancelButton;
-
+    protected Runnable okAction;
+    protected Runnable cancelAction;
     public ObjectEditorDialog(Window parent, Object objectForEditing, ResourceBundle uiResourceBundle, GenerateObjectDialog generateObjectDialog, GetResourceBundleByClass getResourceBundleByClass) {
         super(parent, objectForEditing, uiResourceBundle, generateObjectDialog, getResourceBundleByClass);
         fieldsForProcessing.forEach(
@@ -64,9 +64,11 @@ public class ObjectEditorDialog extends ObjectDialog implements SetVisibleAndAdd
 
             }
             okCancelAction();
+            doOkAction();
         });
         cancelButton.addActionListener(l->{
             okCancelAction();
+            doCancelAction();
         });
         okCancelPanel.add(okButton);
         okCancelPanel.add(cancelButton);
@@ -79,7 +81,17 @@ public class ObjectEditorDialog extends ObjectDialog implements SetVisibleAndAdd
     }
 
     @Override
-    public void addOkAction(ActionListener l) {
-        okButton.addActionListener(l);
+    public void setAfterOkButtonPressedAction(Runnable action) {
+        this.okAction = action;
+    }
+    @Override
+    public void setActionAfterCancelButtonPressed(Runnable action) {
+        this.cancelAction = action;
+    }
+    private void doOkAction(){
+        if(okAction != null)okAction.run();
+    }
+    private void doCancelAction(){
+        if(cancelAction != null)cancelAction.run();
     }
 }
