@@ -9,6 +9,7 @@ import org.blbulyandavbulyan.oeadl.interfaces.EditorDialogControllingInterface;
 
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.util.function.Consumer;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 public class ComponentGeneratorForEdit extends ComponentGenerator {
+    // FIXME: 11.04.2023 Касается всего этого класса, если в качестве obj в конвертор придёт null, то вылетит NullPointerException, такое может произойти если соответсвующее поле в классе null, исправить
     public ComponentGeneratorForEdit(){
         initTypeToObjectMapper();
 
@@ -132,19 +134,45 @@ public class ComponentGeneratorForEdit extends ComponentGenerator {
                 objectToDialogValueGetter.put(element, setVisibleAndAddOkActionAndGetValueAndDisposeInterface);
                 counter++;
             }
-            JPanel componentEditorPanel = new JPanel();
-            componentEditorPanel.setLayout(new BoxLayout(componentEditorPanel, BoxLayout.Y_AXIS));
-            componentEditorPanel.add(objectJList);
-            JPanel modifyCollectionButtonsPanel = new JPanel();
+            JPanel componentEditorPanel = new JPanel(new GridBagLayout());
+            GridBagConstraints c = new GridBagConstraints();
+            JLabel jCollectionNameLabel = new JLabel(objectDisplayableName);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx = 0;
+            c.gridy = 0;
+            c.gridwidth = 2;
+            componentEditorPanel.add(jCollectionNameLabel, c);
+            c.gridy = 1;
+            c.gridx = 0;
+            c.gridwidth = 2;
+            componentEditorPanel.add(objectJList, c);
+            c.gridy = 2;
+            c.gridx = 0;
+            c.gridwidth = 1;
+            c.insets = new Insets(1, 0, 0, 2);
+            componentEditorPanel.add(removeButton, c);
+            c.gridy = 2;
+            c.gridx = 1;
+            c.gridwidth = 1;
+            c.insets = new Insets(1, 2, 0, 0);
+            componentEditorPanel.add(editButton, c);
+
+//            componentEditorPanel.setLayout(new BoxLayout(componentEditorPanel, BoxLayout.Y_AXIS));
+
+//            jCollectionNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//            jCollectionNameLabel.setPreferredSize(new Dimension(objectJList.getPreferredSize().width, jCollectionNameLabel.getPreferredSize().height));
+//            componentEditorPanel.add(jCollectionNameLabel);
+//            componentEditorPanel.add(objectJList);
+//            JPanel modifyCollectionButtonsPanel = new JPanel();
             // TODO: 08.04.2023 Добавить кнопки здесь для редактирования, удаления и добавления элемента в коллекции
             // TODO: 10.04.2023 Подумать над тем, нужна ли тут кнопка "Добавить", если не понятно какой элемент мы будем добавлять
 
 //            JButton addButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.add"));
 
 //            modifyCollectionButtonsPanel.add(addButton);
-            modifyCollectionButtonsPanel.add(removeButton);
-            modifyCollectionButtonsPanel.add(editButton);
-            componentEditorPanel.add(modifyCollectionButtonsPanel);
+//            modifyCollectionButtonsPanel.add(removeButton);
+//            modifyCollectionButtonsPanel.add(editButton);
+//            componentEditorPanel.add(modifyCollectionButtonsPanel);
 
 //            addButton.addActionListener(l->{
 //

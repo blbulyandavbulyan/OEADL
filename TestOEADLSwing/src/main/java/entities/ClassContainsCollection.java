@@ -10,6 +10,15 @@ import java.util.LinkedList;
 public class ClassContainsCollection {
     @OEADLField
     private Collection<Object> collection;
+    @OEADLField(editable = false)
+    private String whatIsThis = "dadd";
+    @OEADLField
+    private String testField = "2";
+    @OEADLField(editable = false)
+    private String testfield2 = "1243";
+////    @OEADLField
+////    private int testPrimitiveValue;
+
 
     public ClassContainsCollection() {
         collection = new LinkedList<>();

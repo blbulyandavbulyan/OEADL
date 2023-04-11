@@ -32,7 +32,6 @@ public class ObjectDisplayerDialog extends ObjectDialog {
             displayableFields.forEach(
                     field -> {
                         try {
-                            //TODO исправить данное место, убрать жёстко заданный русский текст для кнопки
                             FieldDisplayPanel fieldDisplayPanel = new FieldDisplayPanel(this, field, field.get(objectForDisplay), uiResourceBundle, generateObjectDialog, getResourceBundleByClass);
                             rootPanel.add(fieldDisplayPanel);
                         } catch (IllegalAccessException e) {

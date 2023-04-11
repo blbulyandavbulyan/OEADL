@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.ResourceBundle;
 
 public class ComponentGeneratorForDisplay extends ComponentGenerator {
+    // FIXME: 11.04.2023 Если в конвертор в этом классе придёт null в качестве obj, то вылетит NullPointerException, такое возможно если поле в классе null
     protected static final Class<?> []toStringTypes = {
             int.class, long.class, short.class, float.class, double.class, byte.class, boolean.class, char.class, Number.class, String.class, Enum.class
     };

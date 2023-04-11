@@ -3,6 +3,7 @@ package org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog;
 
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
 import org.blbulyandavbulyan.oeadl.exceptions.OEADLException;
+import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldDisplayPanel;
 import org.blbulyandavbulyan.oeadl.interfaces.GenerateObjectDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GetResourceBundleByClass;
 import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldEditPanel;
@@ -13,7 +14,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * Этот класс предназначен для отображения объектов с возможностью редактирования
@@ -34,21 +37,31 @@ public class ObjectEditorDialog extends ObjectDialog implements EditorDialogCont
         super(parent, objectForEditing, uiResourceBundle, generateObjectDialog, getResourceBundleByClass);
         fieldsForProcessing.forEach(
                 field -> {
-                    OEADLField oeadlField = field.getAnnotation(OEADLField.class);
-                    if(oeadlField.editable()){
-                        try {
-                            FieldEditPanel fieldEditPanel = new FieldEditPanel(this, field, field.get(objectForEditing), uiResourceBundle, generateObjectDialog, getResourceBundleByClass);
+                    try {
+                        OEADLField oeadlField = field.getAnnotation(OEADLField.class);
+                        Object fieldValue = field.get(objectForEditing);
+                        if(oeadlField.editable()){
+                            FieldEditPanel fieldEditPanel = new FieldEditPanel(this, field, fieldValue, uiResourceBundle, generateObjectDialog, getResourceBundleByClass);
                             fieldPanels.add(fieldEditPanel);
-                            rootPanel.add(fieldEditPanel);
-                        } catch (IllegalAccessException e) {
-                            throw new OEADLException(e);
+                        }
+                        else if(oeadlField.displayable()){
+                            // TODO: 11.04.2023 Добавить обработку поля только для отображения здесь
+                            FieldDisplayPanel fieldDisplayPanel = new FieldDisplayPanel(this, field, fieldValue, uiResourceBundle, generateObjectDialog, getResourceBundleByClass);
+                            fieldPanels.add(fieldDisplayPanel);
                         }
                     }
-                    else if(oeadlField.displayable()){
-
+                    catch (IllegalAccessException e){
+                        throw new OEADLException(e);
                     }
+
                 }
         );
+        fieldPanels = fieldPanels.stream().sorted((fP1, fP2) -> {
+            if(fP1.getClass().equals(fP2.getClass()))return 0;
+            else if(fP1 instanceof FieldEditPanel)return 1;
+            else return -1;
+        }).collect(Collectors.toList());
+        fieldPanels.forEach(fieldPanel -> rootPanel.add(fieldPanel));
         JPanel okCancelPanel = new JPanel();
         okButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.ok"));
         cancelButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.cancel"));
