@@ -28,7 +28,8 @@ public class ComponentGeneratorForEdit extends ComponentGenerator {
     }
     private void initTypeToObjectMapper(){
         typeToObjectMapperMap.put(String.class, ((String objectDisplayableName, Object obj, ObjectDialog parent, ResourceBundle uiResourceBundle, GenerateObjectDialog generateObjectDialog, GetResourceBundleByClass getResourceBundleByClass) -> {
-            JTextField jTextField = new JTextField(obj.toString());
+            JTextField jTextField = new JTextField(obj != null ? obj.toString() : "");
+            if(jTextField.getText().length() <= 10)jTextField.setColumns(10);
             JPanel jPanel = new JPanel();
             jPanel.add(new JLabel(objectDisplayableName));
             jPanel.add(jTextField);
@@ -59,6 +60,7 @@ public class ComponentGeneratorForEdit extends ComponentGenerator {
             numberFormatter.setCommitsOnValidEdit(true);
             JFormattedTextField jFormattedTextField = new JFormattedTextField(numberFormatter);
             jFormattedTextField.setValue(obj);
+            if(jFormattedTextField.getText().length() <= 10)jFormattedTextField.setColumns(10);
             JPanel jPanel = new JPanel();
             jPanel.add(new JLabel(objectDisplayableName));
             jPanel.add(jFormattedTextField);
@@ -145,7 +147,7 @@ public class ComponentGeneratorForEdit extends ComponentGenerator {
             c.gridy = 1;
             c.gridx = 0;
             c.gridwidth = 2;
-            componentEditorPanel.add(objectJList, c);
+            componentEditorPanel.add(new JScrollPane(objectJList), c);
             c.gridy = 2;
             c.gridx = 0;
             c.gridwidth = 1;
@@ -156,27 +158,8 @@ public class ComponentGeneratorForEdit extends ComponentGenerator {
             c.gridwidth = 1;
             c.insets = new Insets(1, 2, 0, 0);
             componentEditorPanel.add(editButton, c);
-
-//            componentEditorPanel.setLayout(new BoxLayout(componentEditorPanel, BoxLayout.Y_AXIS));
-
-//            jCollectionNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//            jCollectionNameLabel.setPreferredSize(new Dimension(objectJList.getPreferredSize().width, jCollectionNameLabel.getPreferredSize().height));
-//            componentEditorPanel.add(jCollectionNameLabel);
-//            componentEditorPanel.add(objectJList);
-//            JPanel modifyCollectionButtonsPanel = new JPanel();
             // TODO: 08.04.2023 Добавить кнопки здесь для редактирования, удаления и добавления элемента в коллекции
             // TODO: 10.04.2023 Подумать над тем, нужна ли тут кнопка "Добавить", если не понятно какой элемент мы будем добавлять
-
-//            JButton addButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.add"));
-
-//            modifyCollectionButtonsPanel.add(addButton);
-//            modifyCollectionButtonsPanel.add(removeButton);
-//            modifyCollectionButtonsPanel.add(editButton);
-//            componentEditorPanel.add(modifyCollectionButtonsPanel);
-
-//            addButton.addActionListener(l->{
-//
-//            });
             removeButton.addActionListener(l->{
                 Object selectedObject = objectJList.getSelectedValue();
                 objectToDialogValueGetter.get(selectedObject).dispose();

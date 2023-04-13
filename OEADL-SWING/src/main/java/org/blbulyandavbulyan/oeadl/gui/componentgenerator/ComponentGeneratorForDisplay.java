@@ -1,11 +1,19 @@
 package org.blbulyandavbulyan.oeadl.gui.componentgenerator;
 
+import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
 import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDialog;
+import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDisplayerDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GenerateObjectDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GetResourceBundleByClass;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class ComponentGeneratorForDisplay extends ComponentGenerator {
@@ -28,6 +36,7 @@ public class ComponentGeneratorForDisplay extends ComponentGenerator {
         //Collection и его базовые потомки
         ObjectToComponentAndValueGetterConverter iterableObjectConverter =  (String objectDisplayableName, Object obj, ObjectDialog parent, ResourceBundle uiResourceBundle, GenerateObjectDialog generateObjectDialog, GetResourceBundleByClass getResourceBundleByClass) ->{
             Object[] objects = null;
+            HashMap<Object, ObjectDisplayerDialog> objectToItsDisplayer = new HashMap<>();
             if(obj instanceof Collection){
                 objects = ((Collection<Object>) obj).toArray();
             }
@@ -35,10 +44,36 @@ public class ComponentGeneratorForDisplay extends ComponentGenerator {
                 objects = (Object[]) obj;
             }
             else throw new IllegalArgumentException("argument for this function must be collection or array");
-            JPanel jPanel = new JPanel();
-            jPanel.add(new JLabel(objectDisplayableName));
-            jPanel.add(new JList<>(objects));
-            return new ComponentAndValueGetter(jPanel, ()->obj);
+            JPanel jComponentDisplayerPanel = new JPanel(new GridBagLayout());
+            JList<Object> objectsJList = new JList<>(objects);
+            JLabel jNameLabel = new JLabel(objectDisplayableName);
+            JButton showDetailsButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.watchdetails"));
+            showDetailsButton.addActionListener(actionEvent -> {
+                Object selectedObject = objectsJList.getSelectedValue();
+                if(selectedObject != null && objectToItsDisplayer.containsKey(selectedObject)){
+                    ObjectDisplayerDialog objectDisplayerDialog = objectToItsDisplayer.get(selectedObject);
+                    objectDisplayerDialog.setVisible(!objectDisplayerDialog.isVisible());
+                }
+            });
+            objectsJList.addListSelectionListener(listSelectionEvent -> {
+                showDetailsButton.setEnabled(!(objectsJList.isSelectionEmpty() || !objectToItsDisplayer.containsKey(objectsJList.getSelectedValue())));
+            });
+            for (Object elementInArray : objects) {
+                if(elementInArray.getClass().isAnnotationPresent(OEADLProcessingClass.class)){
+                    objectToItsDisplayer.put(elementInArray, (ObjectDisplayerDialog) generateObjectDialog.generateObjectDialog(parent, elementInArray));
+                }
+            }
+            objectsJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            showDetailsButton.setEnabled(false);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            jComponentDisplayerPanel.add(jNameLabel, gbc);
+            gbc.gridy = 1;
+            jComponentDisplayerPanel.add(new JScrollPane(objectsJList), gbc);
+            gbc.gridy = 2;
+            jComponentDisplayerPanel.add(showDetailsButton, gbc);
+            return new ComponentAndValueGetter(jComponentDisplayerPanel, ()->obj);
         };
         for(Class<?> iterableType : iterableTypes)
             typeToObjectMapperMap.put(iterableType, iterableObjectConverter);
