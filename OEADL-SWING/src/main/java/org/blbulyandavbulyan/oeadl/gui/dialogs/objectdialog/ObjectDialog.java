@@ -52,9 +52,10 @@ public abstract class ObjectDialog extends DialogValueGetter {
         this.objectClassResourceBundle = getResourceBundleByClass.getResourceBundleForClass(processingObject.getClass());
         if(!processingObject.getClass().isAnnotationPresent(OEADLProcessingClass.class))throw new UnsupportedClassException(processingObject.getClass());
         fieldPanels = new LinkedList<>();
+        String dialogTitlePropertyKey = GetOrDefault.getStringOrDefault(processingObject.getClass().getAnnotation(OEADLProcessingClass.class).localizedClassNamePropertyKey(), processingObject.getClass().getName());
         String dialogTitle = GetOrDefault.getFromRbOrDefault(
                 objectClassResourceBundle,
-                processingObject.getClass().getAnnotation(OEADLProcessingClass.class).localizedClassNamePropertyKey(),
+                dialogTitlePropertyKey,
                 processingObject.getClass().getName()
         );
         this.setTitle(dialogTitle);
