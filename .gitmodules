@@ -1,0 +1,3 @@
+[submodule "OEADL-ANNOTATIONS"]
+	path = OEADL-ANNOTATIONS
+	url = git@github.com:blbulyandavbulyan/OEADL-ANNOTATIONS.git
