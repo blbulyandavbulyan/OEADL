@@ -1,3 +1,6 @@
 [submodule "OEADL-ANNOTATIONS"]
 	path = OEADL-ANNOTATIONS
 	url = git@github.com:blbulyandavbulyan/OEADL-ANNOTATIONS.git
+[submodule "OEADL-EXCEPTIONS"]
+	path = OEADL-EXCEPTIONS
+	url = git@github.com:blbulyandavbulyan/OEADL-EXCEPTIONS.git
