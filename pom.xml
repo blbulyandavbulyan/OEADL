@@ -12,7 +12,6 @@
         <module>OEADL-EXCEPTIONS</module>
         <module>OEADL-SWING</module>
         <module>OEADL-ANNOTATIONS</module>
-        <module>TestOEADLSwing</module>
     </modules>
 
     <properties>
