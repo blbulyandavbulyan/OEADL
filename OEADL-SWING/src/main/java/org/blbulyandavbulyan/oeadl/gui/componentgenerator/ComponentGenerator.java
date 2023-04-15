@@ -9,7 +9,7 @@ import org.blbulyandavbulyan.oeadl.exceptions.invalidtype.UnsupportedTypeExcepti
 import org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog.ObjectDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GenerateObjectDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GetResourceBundleByClass;
-import org.blbulyandavbulyan.oeadl.namegetter.GetNameOrDefault;
+import org.blbulyandavbulyan.oeadl.namegetter.GetOrDefault;
 
 import javax.swing.*;
 import java.lang.reflect.Field;
@@ -58,9 +58,13 @@ public abstract class ComponentGenerator {
                                                                    String showObjectDialogButtonText, GenerateObjectDialog generateObjectDialog,
                                                                    GetResourceBundleByClass getResourceBundleByClass, ResourceBundle uiResourceBundle){
         Class<?> fieldType = field.getType();
-        String fieldName = GetNameOrDefault.getNameOrDefault(
+        String fieldNamePropertyKey = GetOrDefault.getStringOrDefault(
+                field.getAnnotation(OEADLField.class).localizedNamePropertyKey(),
+                String.format("%s.%s", field.getDeclaringClass().getCanonicalName(), field.getName())
+        );
+        String fieldName = GetOrDefault.getFromRbOrDefault(
                 getResourceBundleByClass.getResourceBundleForClass(field.getDeclaringClass()),
-                field.getAnnotation(OEADLField.class).localizedNamePropertyKey(), field.getName()
+                fieldNamePropertyKey, field.getName()
         );
         if(canConvert(field))
             return typeToObjectMapperMap.get(fieldType).convertToComponentAndValueGetter(fieldName, processingObject, parent, uiResourceBundle, generateObjectDialog, getResourceBundleByClass);

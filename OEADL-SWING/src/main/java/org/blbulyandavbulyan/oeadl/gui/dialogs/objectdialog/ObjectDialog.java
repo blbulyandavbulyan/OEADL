@@ -4,12 +4,11 @@ package org.blbulyandavbulyan.oeadl.gui.dialogs.objectdialog;
 import org.blbulyandavbulyan.oeadl.annotations.OEADLField;
 import org.blbulyandavbulyan.oeadl.annotations.OEADLProcessingClass;
 import org.blbulyandavbulyan.oeadl.exceptions.invalidclass.UnsupportedClassException;
-import org.blbulyandavbulyan.oeadl.factories.ObjectDialogFactory;
 import org.blbulyandavbulyan.oeadl.gui.dialogs.dialogvaluegetter.DialogValueGetter;
 import org.blbulyandavbulyan.oeadl.gui.panels.fieldpanel.FieldPanel;
 import org.blbulyandavbulyan.oeadl.interfaces.GenerateObjectDialog;
 import org.blbulyandavbulyan.oeadl.interfaces.GetResourceBundleByClass;
-import org.blbulyandavbulyan.oeadl.namegetter.GetNameOrDefault;
+import org.blbulyandavbulyan.oeadl.namegetter.GetOrDefault;
 import org.blbulyandavbulyan.oeadl.reflection.ProcessingClass;
 
 import javax.swing.*;
@@ -53,7 +52,7 @@ public abstract class ObjectDialog extends DialogValueGetter {
         this.objectClassResourceBundle = getResourceBundleByClass.getResourceBundleForClass(processingObject.getClass());
         if(!processingObject.getClass().isAnnotationPresent(OEADLProcessingClass.class))throw new UnsupportedClassException(processingObject.getClass());
         fieldPanels = new LinkedList<>();
-        String dialogTitle = GetNameOrDefault.getNameOrDefault(
+        String dialogTitle = GetOrDefault.getFromRbOrDefault(
                 objectClassResourceBundle,
                 processingObject.getClass().getAnnotation(OEADLProcessingClass.class).localizedClassNamePropertyKey(),
                 processingObject.getClass().getName()
