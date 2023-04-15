@@ -2,5 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/OEADL-ANNOTATIONS" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/OEADL-EXCEPTIONS" vcs="Git" />
   </component>
 </project>
