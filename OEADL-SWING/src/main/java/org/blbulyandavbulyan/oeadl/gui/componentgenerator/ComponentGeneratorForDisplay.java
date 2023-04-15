@@ -64,6 +64,7 @@ public class ComponentGeneratorForDisplay extends ComponentGenerator {
             objectsJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             showDetailsButton.setEnabled(false);
             GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.gridx = 0;
             gbc.gridy = 0;
             jComponentDisplayerPanel.add(jNameLabel, gbc);
