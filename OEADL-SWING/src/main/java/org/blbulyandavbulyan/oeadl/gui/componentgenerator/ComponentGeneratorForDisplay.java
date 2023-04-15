@@ -12,9 +12,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class ComponentGeneratorForDisplay extends ComponentGenerator {
     // FIXME: 11.04.2023 Если в конвертор в этом классе придёт null в качестве obj, то вылетит NullPointerException, такое возможно если поле в классе null
@@ -79,5 +77,44 @@ public class ComponentGeneratorForDisplay extends ComponentGenerator {
             typeToObjectMapperMap.put(iterableType, iterableObjectConverter);
         for(Class<?> wrappedArrayType : objectArrayTypesWhereIsPossibleToStringForElement)
             typeToObjectMapperMap.put(wrappedArrayType, iterableObjectConverter);
+
+        //обработка для Map
+
+        typeToObjectMapperMap.put(AbstractMap.class, (objectDisplayableName, obj, parent, uiResourceBundle, generateObjectDialog, getResourceBundleByClass) -> {
+            HashMap<Object, ObjectDisplayerDialog> objectToItsDisplayerDialog = new HashMap<>();
+            Map<Object, Object> processingMap = (Map<Object, Object>) obj;
+            JComboBox<Object> keySelector = new JComboBox<>();
+            CardLayout cardLayout = new CardLayout();
+            JPanel valuesPanel = new JPanel(cardLayout);
+            keySelector.addActionListener(l->{
+                Object selectedKey = keySelector.getSelectedItem();
+                if(selectedKey != null)cardLayout.show(valuesPanel, selectedKey.toString());
+            });
+            keySelector.setEditable(false);
+            processingMap.entrySet().forEach((objectObjectEntry -> {
+                Object key = objectObjectEntry.getKey();
+                Object value = objectObjectEntry.getValue();
+                if(value.getClass().isAnnotationPresent(OEADLProcessingClass.class)){
+                    JButton watchDetailsButton = new JButton(uiResourceBundle.getString("oeadl_swing.buttons.watchdetails"));
+                    ObjectDisplayerDialog objectDisplayerDialog = (ObjectDisplayerDialog) generateObjectDialog.generateObjectDialog(parent, value);
+                    watchDetailsButton.addActionListener(l ->{
+                        objectDisplayerDialog.setVisible(!objectDisplayerDialog.isVisible());
+                    });
+                    keySelector.addItem(key);
+                    valuesPanel.add(key.toString(), watchDetailsButton);
+                }
+                else{
+                    keySelector.addItem(key);
+                    valuesPanel.add(key.toString(), generateComponentAndValueGetterForGivingTypeOrForItsParentClass(
+                            parent, "", value, generateObjectDialog,
+                            getResourceBundleByClass, uiResourceBundle
+                    ).getDisplayableComponent());
+                }
+            }));
+            JPanel mapDisplayPanel = new JPanel();
+            mapDisplayPanel.add(keySelector);
+            mapDisplayPanel.add(valuesPanel);
+            return new ComponentAndValueGetter(mapDisplayPanel, ()->obj);
+        });
     }
 }
